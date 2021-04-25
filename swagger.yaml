@@ -1,9 +1,12 @@
----
 swagger: "2.0"
 info:
   description: "API responsible for abstract payment gateways with simple endpoints"
   version: "1.0.0"
   title: "ProxyPay API"
+  x-logo:
+    url: "/imgs/logo.webp"
+    backgroundColor: "#FFFFFF"
+    altText: "ProxyPay API Docs"
 host: "proxypay.github.io"
 basePath: "/v1/"
 schemes:
@@ -47,7 +50,7 @@ definitions:
         description: "Amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`). Value >= 1"
       installments:
         type: "integer"
-        description: "Installments number. **Value >= 1 and <= 255. Default: 1**"
+        description: "Installments number. **Value >= 1 and <= 255**. Default: `1`"
       cardNumber:
         type: "string"
         description: "Card number, only numbers. E.g.: for a card number *5555.5555.5555.4444* you should use `5555555555554444`"
