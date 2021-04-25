@@ -1,11 +1,9 @@
 ---
 swagger: "2.0"
 info:
-  description: "API responsável por abstrair gateways de pagamento (adquirentes e subadquirentes) por meio de endpoints únicos."
+  description: "API responsible for abstract payment gateways with simple endpoints"
   version: "1.0.0"
   title: "ProxyPay API"
-  contact:
-    email: "alisson@proxypay.com.br"
 host: "proxypay.github.io"
 basePath: "/v1/"
 schemes:
@@ -43,10 +41,10 @@ definitions:
         description: "Flag to capture amount (`true`) or just Authorize (`false`): **Default:** `false`"
       reference:
         type: "string"
-        description: "Used to identify transaction (line store order number). **Length >= 2 and <= 16**"
+        description: "Used to identify transaction (line store order number). **Length <= 16**"
       amount:
         type: "integer"
-        description: "Amount with no sepration (R$ 0,50 => 50; R$ 1000,50 => 100050). Value >= 1"
+        description: "Amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`). Value >= 1"
       installments:
         type: "integer"
         description: "Installments number. **Value >= 1 and <= 255. Default: 1**"
