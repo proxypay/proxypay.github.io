@@ -216,6 +216,17 @@ security:
 components:
   securitySchemes:
     clientIdAndSecretBasic:
+      description: >
+        To access API endpoints you must use `clientId` and `clientSecret` with HTTP Basic Auth. E.g.:
+
+
+        Using `clientId` as `my-client-id` and `clientSecret` as `my-client-secret`.
+
+
+        Join then with `:` and encode with base64, resulting in `bXktY2xpZW50LWlkOm15LWNsaWVudC1zZWNyZXQ=`, so your `Authorization` header will be:
+
+
+        `Authorization: Basic bXktY2xpZW50LWlkOm15LWNsaWVudC1zZWNyZXQ=`.
       type: http
       scheme: basic
 
