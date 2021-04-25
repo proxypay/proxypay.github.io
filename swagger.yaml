@@ -96,6 +96,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TransactionCreationResult"
+        400:
+          description: "Validation error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
 
 security:
   - clientIdAndSecretBasic: []
@@ -119,30 +125,39 @@ components:
         capture:
           type: "boolean"
           description: "Flag to capture amount (`true`) or just Authorize (`false`): **Default:** `false`"
+          example: true
         reference:
           type: "string"
           description: "Used to identify transaction (line store order number). **Length <= 16**"
+          example: "my-unique-order-number-1234"
         amount:
           type: "integer"
           description: "Amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`). Value >= 1"
+          example: 100050
         installments:
           type: "integer"
           description: "Installments number. **Value >= 1 and <= 255**. Default: `1`"
+          example: 12
         cardNumber:
           type: "string"
           description: "Card number, only numbers. E.g.: for a card number *5555.5555.5555.4444* you should use `5555555555554444`"
+          example: "5555555555554444"
         expirationMonth:
           type: "integer"
           description: "Card expiration month, only numbers. Value between `1` and `12`"
+          example: 11
         expirationYear:
           type: "integer"
           description: "Card expiration year, only numbers. Format *9999*, E.g: `2028`"
+          example: 2028
         cardHolderName:
           type: "string"
           description: "Card holder name, E.g.: `JOHN DOE`"
+          example: "JOHN DOE"
         securityCode:
           type: "string"
           description: "Security code, format *999*, E.g.: `123`"
+          example: "123"
 
     TransactionCreationResult:
       type: "object"
@@ -150,6 +165,7 @@ components:
         success:
           type: "boolean"
           description: "Transaction made with success (`true`) or not (`false`)"
+          example: true
         status:
           type: "string"
           description: "Transaction creation status. Check full list [here](#section/Transaction-creation-status-codes)"
@@ -158,27 +174,35 @@ components:
             - GenericError
             - InsufficientFunds
             - InvalidPassword
+          example: Success
         gatewayCode:
           type: "string"
           description: "Gateway code used in this transaction"
+          example: "cielo"
         gatewayReturnCode:
           type: "string"
           description: "Raw code returned by gateway"
+          example: "00"
         gatewayReturnMessage:
           type: "string"
           description: "Raw messsage returned by gateway"
+          example: "Operation Successful"
         cardBrand:
           type: "string"
           description: "Card brand returned by gateway"
+          example: "visa"
         reference:
           type: "string"
           description: "Used to identify transaction (line store order number)"
+          example: "my-unique-order-number-1234"
         transactionId:
           type: "string"
           description: "Transaction identification"
+          example: "13adc203-bb0a-4f5f-932e-3e6350e18504"
         authCode:
           type: "string"
           description: "Authorization code returned by card issuer"
+          example: "760946"
         links:
           type: "array"
           items:
@@ -189,9 +213,19 @@ components:
         method:
           type: "string"
           description: "HTTP Method used for this link"
+          example: "PUT"
         rel:
           type: "string"
           description: "Link relationship with transaction"
+          example: "capture"
         url:
           type: "string"
           description: "Link path to be used"
+          example: "/v1/transaction/cielo/13adc203-bb0a-4f5f-932e-3e6350e18504"
+    ValidationError:
+      type: "object"
+      properties:
+        "[field name]":
+          type: "string"
+          description: "Error message"
+          example: "must be no less than 1"
