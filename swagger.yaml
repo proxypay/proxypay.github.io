@@ -1,71 +1,197 @@
-swagger: "2.0"
+openapi: 3.0.0
 info:
-  description: "API responsible for abstract payment gateways with simple endpoints"
-  version: "1.0.0"
   title: "ProxyPay API"
+  description: |
+    API responsible for abstract payment gateways with simple endpoints
+
+    ## Transaction creation status codes
+
+    | status | success? | desc |
+    |:-------|:----|:--------|
+    | `Success` | yes | Sucesso |
+    | `GenericError` | no | Genérica |
+    | `InsufficientFunds` | no | Saldo/limite insuficiente |
+    | `InvalidPassword` | no | Senha inválida |
+    | `NotAllowed` | no | Transação não permitida para o cartão |
+    | `InvalidCardNumber` | no | Número cartão não pertence ao emissor | número cartão inválido |
+    | `SecurityViolation` | no | Violação de segurança |
+    | `SuspectedFraud` | no | Suspeita de fraude |
+    | `InvalidMerchant` | no | Comerciante inválido |
+    | `RetryRequired` | no | Refazer a transação (emissor solicita retentativa) |
+    | `ConsultAccreditation` | no | Consultar credenciador |
+    | `AcquirerProblem` | no | Problema no adquirente |
+    | `CardError` | no | Erro no cartão |
+    | `FormatError` | no | Erro de formato (mensageria) |
+    | `InvalidTransactionValue` | no | Valor da transação inválida |
+    | `InvalidInstallmentValue` | no | Valor da parcela inválida |
+    | `PasswordAttemptsExceeded` | no | Excedidas tentativas de senha | compras |
+    | `LostCard` | no | Cartão perdido |
+    | `StolenCard` | no | Cartão roubado |
+    | `ExpiredCard` | no | Cartão vencido / dt expiração inválida |
+    | `TransactionNotAllowed` | no | Transação não permitida | capacidade do terminal |
+    | `ValueExceeded` | no | Valor excesso | saque |
+    | `InternationalTransactionWithLocalCard` | no | Cartão doméstico - transação internacional |
+    | `InvalidMinValue` | no | Valor mínimo da transação inválido |
+    | `ExceededWithdrawQuantity` | no | Quant. de saques excedido |
+    | `ExpiredPassword` | no | Senha vencida / erro de criptografia de senha |
+    | `PasswordAttemptsExceededWithdraw` | no | Excedidas tentativas de senha | saque |
+    | `InvalidDestinationAccount` | no | Conta destino inválida ou inexistente |
+    | `InvalidOriginAccount` | no | Conta origem inválida ou inexistente |
+    | `CardStillBlocked` | no | Cartão novo sem desbloqueio |
+    | `InvalidCard` | no | Cartão inválido (criptograma) |
+    | `IssuerOutOfService` | no | Emissor fora do ar |
+    | `SystemFailure` | no | Falha do sistema |
+    | `DiffPreAuthorization` | no | Diferença - pré autorização |
+    | `InvalidFunctionDebit` | no | Função incorreta (débito) |
+    | `InvalidFunctionCredit` | no | Função incorreta (crédito) |
+    | `ChangePassword` | no | Troca de senha / desbloqueio |
+    | `NewPasswordNotAccepted` | no | Nova senha não aceita |
+    | `CollectCard` | no | Recolher cartão (não há fraude) |
+    | `DynamicKeyChangeError` | no | Erro por mudança de chave dinâmica |
+    | `FraudConfirmed` | no | Fraude confirmada |
+    | `EmitterNotFound` | no | Emissor ñ localizado - bin incorreto |
+    | `NotAllowedByMoneyLaundryLaw` | no | (negativa do adquirente) não cumprimento pelas leis de ante lavagem de dinheiro |
+    | `InvalidRollback` | no | Reversão inválida |
+    | `NotFoundByRouter` | no | Não localizado pelo roteador |
+    | `DeniedByInfractionLaw` | no | Transação negada por infração de lei |
+    | `DuplicateTracingData` | no | Valor do tracing data duplicado |
+    | `UnsupportedSurchage` | no | Surcharge não suportado |
+    | `UnsupportedSurchageDebitNetwork` | no | Surcharge não suportado pela rede de débito |
+    | `StripForce` | no | Forçar stip |
+    | `WithdrawNotAvailable` | no | Saque não disponível |
+    | `ServiceRecurrencySuspension` | no | Suspensão de pagamento recorrente para um serviço |
+    | `AllServiceRecurrencySuspension` | no | Suspensão de pagamento recorrente para todos serviço |
+    | `TransactionLotQualifiedVisaPin` | no | Transação não qualificada para visa pin |
+    | `AllAuthorizationOrderSuspended` | no | Suspensão de todas as ordens de autorização |
+    | `RegisterNotFoundInFile` | no | Não é possível localizar o registro no arquivo |
+    | `FileNotAvailableForUpdate` | no | Arquivo não disponível para atualização |
+    | `RejectedCancel` | no | Cancelamento não efetuado. transação não localizada. |
+    | `ApprovedTransactionCancel` | no | Transação de cancelamento autorizada com sucesso. atençâo: esse retorno é para casos de cancelamentos e não para casos de autorizações. |
+
+
+  version: "1.0.0"
   x-logo:
     url: "/imgs/logo.webp"
     backgroundColor: "#FFFFFF"
     altText: "ProxyPay API Docs"
-host: "proxypay.github.io"
-basePath: "/v1/"
-schemes:
-- "https"
-- "http"
+
+servers:
+  - url: https://api-sandbox.proxypay.com.br
+    description: Sandbox server (uses test data)
+
 paths:
   /transaction:
     post:
-      summary: "Creates a new transaction"
-      description: ""
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "transactionCreation"
-        schema:
-          $ref: "#/definitions/TransactionCreation"
+      summary: "Create transaction"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionCreation"
       responses:
         200:
-          description: "successful operation"
-definitions:
-  TransactionCreation:
-    type: "object"
-    required:
-    - "reference"
-    - "amount"
-    - "cardNumber"
-    - "expirationMonth"
-    - "expirationYear"
-    properties:
-      capture:
-        type: "boolean"
-        description: "Flag to capture amount (`true`) or just Authorize (`false`): **Default:** `false`"
-      reference:
-        type: "string"
-        description: "Used to identify transaction (line store order number). **Length <= 16**"
-      amount:
-        type: "integer"
-        description: "Amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`). Value >= 1"
-      installments:
-        type: "integer"
-        description: "Installments number. **Value >= 1 and <= 255**. Default: `1`"
-      cardNumber:
-        type: "string"
-        description: "Card number, only numbers. E.g.: for a card number *5555.5555.5555.4444* you should use `5555555555554444`"
-      expirationMonth:
-        type: "integer"
-        description: "Card expiration month, only numbers. Value between `1` and `12`"
-      expirationYear:
-        type: "integer"
-        description: "Card expiration year, only numbers. Format *9999*, E.g: `2028`"
-      cardHolderName:
-        type: "string"
-        description: "Card holder name, E.g.: `JOHN DOE`"
-      securityCode:
-        type: "string"
-        description: "Security code, format *999*, E.g.: `123`"
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionCreationResult"
+
+security:
+  - clientIdAndSecretBasic: []
+
+components:
+  securitySchemes:
+    clientIdAndSecretBasic:
+      type: http
+      scheme: basic
+
+  schemas:
+    TransactionCreation:
+      type: "object"
+      required:
+      - "reference"
+      - "amount"
+      - "cardNumber"
+      - "expirationMonth"
+      - "expirationYear"
+      properties:
+        capture:
+          type: "boolean"
+          description: "Flag to capture amount (`true`) or just Authorize (`false`): **Default:** `false`"
+        reference:
+          type: "string"
+          description: "Used to identify transaction (line store order number). **Length <= 16**"
+        amount:
+          type: "integer"
+          description: "Amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`). Value >= 1"
+        installments:
+          type: "integer"
+          description: "Installments number. **Value >= 1 and <= 255**. Default: `1`"
+        cardNumber:
+          type: "string"
+          description: "Card number, only numbers. E.g.: for a card number *5555.5555.5555.4444* you should use `5555555555554444`"
+        expirationMonth:
+          type: "integer"
+          description: "Card expiration month, only numbers. Value between `1` and `12`"
+        expirationYear:
+          type: "integer"
+          description: "Card expiration year, only numbers. Format *9999*, E.g: `2028`"
+        cardHolderName:
+          type: "string"
+          description: "Card holder name, E.g.: `JOHN DOE`"
+        securityCode:
+          type: "string"
+          description: "Security code, format *999*, E.g.: `123`"
+
+    TransactionCreationResult:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          description: "Transaction made with success (`true`) or not (`false`)"
+        status:
+          type: "string"
+          description: "Transaction creation status. Check full list [here](#section/Transaction-creation-status-codes)"
+          enum:
+            - Success
+            - GenericError
+            - InsufficientFunds
+            - InvalidPassword
+        gatewayCode:
+          type: "string"
+          description: "Gateway code used in this transaction"
+        gatewayReturnCode:
+          type: "string"
+          description: "Raw code returned by gateway"
+        gatewayReturnMessage:
+          type: "string"
+          description: "Raw messsage returned by gateway"
+        cardBrand:
+          type: "string"
+          description: "Card brand returned by gateway"
+        reference:
+          type: "string"
+          description: "Used to identify transaction (line store order number)"
+        transactionId:
+          type: "string"
+          description: "Transaction identification"
+        authCode:
+          type: "string"
+          description: "Authorization code returned by card issuer"
+        links:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Link"
+    Link:
+      type: "object"
+      properties:
+        method:
+          type: "string"
+          description: "HTTP Method used for this link"
+        rel:
+          type: "string"
+          description: "Link relationship with transaction"
+        url:
+          type: "string"
+          description: "Link path to be used"
