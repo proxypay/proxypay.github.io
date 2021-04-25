@@ -76,8 +76,8 @@ info:
     altText: "ProxyPay API Docs"
 
 servers:
-  - url: https://api-sandbox.proxypay.com.br
-    description: Sandbox server (uses test data)
+  - url: https://api-sandbox.proxypay.com.br/v1
+    description: Sandbox server v1 (uses test data)
 
 paths:
   /transaction:
