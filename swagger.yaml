@@ -53,7 +53,7 @@ definitions:
         description: "Card number, only numbers. E.g.: for a card number *5555.5555.5555.4444* you should use `5555555555554444`"
       expirationMonth:
         type: "integer"
-        description: "Card expiration month, only numbers. Value between 1 and 12"
+        description: "Card expiration month, only numbers. Value between `1` and `12`"
       expirationYear:
         type: "integer"
         description: "Card expiration year, only numbers. Format *9999*, E.g: `2028`"
