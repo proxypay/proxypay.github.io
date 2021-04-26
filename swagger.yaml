@@ -1,102 +1,114 @@
 openapi: 3.0.0
 info:
   title: "ProxyPay API"
-  description: |
-    API responsável por abstrair gateways de pagamento (adquirentes e subadquirentes) por meio de endpoints únicos.
-
-    ## Códigos de retorno para criação de transações
-
-    | status | sucesso? | descrição |
-    |:-------|:----|:--------|
-    | `Success` | yes | Sucesso |
-    | `GenericError` | no | Genérica |
-    | `InsufficientFunds` | no | Saldo/limite insuficiente |
-    | `InvalidPassword` | no | Senha inválida |
-    | `NotAllowed` | no | Transação não permitida para o cartão |
-    | `InvalidCardNumber` | no | Número cartão não pertence ao emissor | número cartão inválido |
-    | `SecurityViolation` | no | Violação de segurança |
-    | `SuspectedFraud` | no | Suspeita de fraude |
-    | `InvalidMerchant` | no | Comerciante inválido |
-    | `RetryRequired` | no | Refazer a transação (emissor solicita retentativa) |
-    | `ConsultAccreditation` | no | Consultar credenciador |
-    | `AcquirerProblem` | no | Problema no adquirente |
-    | `CardError` | no | Erro no cartão |
-    | `FormatError` | no | Erro de formato (mensageria) |
-    | `InvalidTransactionValue` | no | Valor da transação inválida |
-    | `InvalidInstallmentValue` | no | Valor da parcela inválida |
-    | `PasswordAttemptsExceeded` | no | Excedidas tentativas de senha | compras |
-    | `LostCard` | no | Cartão perdido |
-    | `StolenCard` | no | Cartão roubado |
-    | `ExpiredCard` | no | Cartão vencido / dt expiração inválida |
-    | `TransactionNotAllowed` | no | Transação não permitida | capacidade do terminal |
-    | `ValueExceeded` | no | Valor excesso | saque |
-    | `InternationalTransactionWithLocalCard` | no | Cartão doméstico - transação internacional |
-    | `InvalidMinValue` | no | Valor mínimo da transação inválido |
-    | `ExceededWithdrawQuantity` | no | Quant. de saques excedido |
-    | `ExpiredPassword` | no | Senha vencida / erro de criptografia de senha |
-    | `PasswordAttemptsExceededWithdraw` | no | Excedidas tentativas de senha | saque |
-    | `InvalidDestinationAccount` | no | Conta destino inválida ou inexistente |
-    | `InvalidOriginAccount` | no | Conta origem inválida ou inexistente |
-    | `CardStillBlocked` | no | Cartão novo sem desbloqueio |
-    | `InvalidCard` | no | Cartão inválido (criptograma) |
-    | `IssuerOutOfService` | no | Emissor fora do ar |
-    | `SystemFailure` | no | Falha do sistema |
-    | `DiffPreAuthorization` | no | Diferença - pré autorização |
-    | `InvalidFunctionDebit` | no | Função incorreta (débito) |
-    | `InvalidFunctionCredit` | no | Função incorreta (crédito) |
-    | `ChangePassword` | no | Troca de senha / desbloqueio |
-    | `NewPasswordNotAccepted` | no | Nova senha não aceita |
-    | `CollectCard` | no | Recolher cartão (não há fraude) |
-    | `DynamicKeyChangeError` | no | Erro por mudança de chave dinâmica |
-    | `FraudConfirmed` | no | Fraude confirmada |
-    | `EmitterNotFound` | no | Emissor ñ localizado - bin incorreto |
-    | `NotAllowedByMoneyLaundryLaw` | no | (negativa do adquirente) não cumprimento pelas leis de ante lavagem de dinheiro |
-    | `InvalidRollback` | no | Reversão inválida |
-    | `NotFoundByRouter` | no | Não localizado pelo roteador |
-    | `DeniedByInfractionLaw` | no | Transação negada por infração de lei |
-    | `DuplicateTracingData` | no | Valor do tracing data duplicado |
-    | `UnsupportedSurchage` | no | Surcharge não suportado |
-    | `UnsupportedSurchageDebitNetwork` | no | Surcharge não suportado pela rede de débito |
-    | `StripForce` | no | Forçar stip |
-    | `WithdrawNotAvailable` | no | Saque não disponível |
-    | `ServiceRecurrencySuspension` | no | Suspensão de pagamento recorrente para um serviço |
-    | `AllServiceRecurrencySuspension` | no | Suspensão de pagamento recorrente para todos serviço |
-    | `TransactionLotQualifiedVisaPin` | no | Transação não qualificada para visa pin |
-    | `AllAuthorizationOrderSuspended` | no | Suspensão de todas as ordens de autorização |
-    | `RegisterNotFoundInFile` | no | Não é possível localizar o registro no arquivo |
-    | `FileNotAvailableForUpdate` | no | Arquivo não disponível para atualização |
-    | `RejectedCancel` | no | Cancelamento não efetuado. transação não localizada. |
-    | `ApprovedTransactionCancel` | no | Transação de cancelamento autorizada com sucesso. atençâo: esse retorno é para casos de cancelamentos e não para casos de autorizações. |
-
-
-    ## Lista de situações da transação
-
-    | Status | Descrição |
-    | :------- | :--------- |
-    | `NotFinished` | Aguardando atualização de status |
-    | `Authorized` | Pagamento apto a ser capturado ou definido como pago |
-    | `PaymentConfirmed` | Pagamento confirmado e finalizado |
-    | `Denied` | Pagamento negado por Autorizador |
-    | `Voided` | Pagamento cancelado |
-    | `Refunded` | Pagamento cancelado após 23:59 do dia de autorização |
-    | `Pending` | Aguardando Status de instituição financeira |
-    | `Aborted` | Pagamento cancelado por falha no processamento ou por ação do AF |
-    | `Scheduled` | Recorrência agendada |
-
   version: "1.0.0"
   x-logo:
     url: "/imgs/logo.webp"
     backgroundColor: "#FFFFFF"
     altText: "ProxyPay API - Documentação"
 
+tags:
+  - name: "Quem somos"
+    description: API responsável por abstrair gateways de pagamento (adquirentes e subadquirentes) por meio de endpoints únicos.
+  - name: Códigos de retorno para criação de transações
+    description: |-
+      | status | sucesso? | descrição |
+      |:-------|:----|:--------|
+      | `Success` | yes | Sucesso |
+      | `GenericError` | no | Genérica |
+      | `InsufficientFunds` | no | Saldo/limite insuficiente |
+      | `InvalidPassword` | no | Senha inválida |
+      | `NotAllowed` | no | Transação não permitida para o cartão |
+      | `InvalidCardNumber` | no | Número cartão não pertence ao emissor | número cartão inválido |
+      | `SecurityViolation` | no | Violação de segurança |
+      | `SuspectedFraud` | no | Suspeita de fraude |
+      | `InvalidMerchant` | no | Comerciante inválido |
+      | `RetryRequired` | no | Refazer a transação (emissor solicita retentativa) |
+      | `ConsultAccreditation` | no | Consultar credenciador |
+      | `AcquirerProblem` | no | Problema no adquirente |
+      | `CardError` | no | Erro no cartão |
+      | `FormatError` | no | Erro de formato (mensageria) |
+      | `InvalidTransactionValue` | no | Valor da transação inválida |
+      | `InvalidInstallmentValue` | no | Valor da parcela inválida |
+      | `PasswordAttemptsExceeded` | no | Excedidas tentativas de senha | compras |
+      | `LostCard` | no | Cartão perdido |
+      | `StolenCard` | no | Cartão roubado |
+      | `ExpiredCard` | no | Cartão vencido / dt expiração inválida |
+      | `TransactionNotAllowed` | no | Transação não permitida | capacidade do terminal |
+      | `ValueExceeded` | no | Valor excesso | saque |
+      | `InternationalTransactionWithLocalCard` | no | Cartão doméstico - transação internacional |
+      | `InvalidMinValue` | no | Valor mínimo da transação inválido |
+      | `ExceededWithdrawQuantity` | no | Quant. de saques excedido |
+      | `ExpiredPassword` | no | Senha vencida / erro de criptografia de senha |
+      | `PasswordAttemptsExceededWithdraw` | no | Excedidas tentativas de senha | saque |
+      | `InvalidDestinationAccount` | no | Conta destino inválida ou inexistente |
+      | `InvalidOriginAccount` | no | Conta origem inválida ou inexistente |
+      | `CardStillBlocked` | no | Cartão novo sem desbloqueio |
+      | `InvalidCard` | no | Cartão inválido (criptograma) |
+      | `IssuerOutOfService` | no | Emissor fora do ar |
+      | `SystemFailure` | no | Falha do sistema |
+      | `DiffPreAuthorization` | no | Diferença - pré autorização |
+      | `InvalidFunctionDebit` | no | Função incorreta (débito) |
+      | `InvalidFunctionCredit` | no | Função incorreta (crédito) |
+      | `ChangePassword` | no | Troca de senha / desbloqueio |
+      | `NewPasswordNotAccepted` | no | Nova senha não aceita |
+      | `CollectCard` | no | Recolher cartão (não há fraude) |
+      | `DynamicKeyChangeError` | no | Erro por mudança de chave dinâmica |
+      | `FraudConfirmed` | no | Fraude confirmada |
+      | `EmitterNotFound` | no | Emissor ñ localizado - bin incorreto |
+      | `NotAllowedByMoneyLaundryLaw` | no | (negativa do adquirente) não cumprimento pelas leis de ante lavagem de dinheiro |
+      | `InvalidRollback` | no | Reversão inválida |
+      | `NotFoundByRouter` | no | Não localizado pelo roteador |
+      | `DeniedByInfractionLaw` | no | Transação negada por infração de lei |
+      | `DuplicateTracingData` | no | Valor do tracing data duplicado |
+      | `UnsupportedSurchage` | no | Surcharge não suportado |
+      | `UnsupportedSurchageDebitNetwork` | no | Surcharge não suportado pela rede de débito |
+      | `StripForce` | no | Forçar stip |
+      | `WithdrawNotAvailable` | no | Saque não disponível |
+      | `ServiceRecurrencySuspension` | no | Suspensão de pagamento recorrente para um serviço |
+      | `AllServiceRecurrencySuspension` | no | Suspensão de pagamento recorrente para todos serviço |
+      | `TransactionLotQualifiedVisaPin` | no | Transação não qualificada para visa pin |
+      | `AllAuthorizationOrderSuspended` | no | Suspensão de todas as ordens de autorização |
+      | `RegisterNotFoundInFile` | no | Não é possível localizar o registro no arquivo |
+      | `FileNotAvailableForUpdate` | no | Arquivo não disponível para atualização |
+      | `RejectedCancel` | no | Cancelamento não efetuado. transação não localizada. |
+      | `ApprovedTransactionCancel` | no | Transação de cancelamento autorizada com sucesso. atençâo: esse retorno é para casos de cancelamentos e não para casos de autorizações. |
+  - name: Lista de situações da transação
+    description: |-
+      | Status | Descrição |
+      | :------- | :--------- |
+      | `NotFinished` | Aguardando atualização de status |
+      | `Authorized` | Pagamento apto a ser capturado ou definido como pago |
+      | `PaymentConfirmed` | Pagamento confirmado e finalizado |
+      | `Denied` | Pagamento negado por Autorizador |
+      | `Voided` | Pagamento cancelado |
+      | `Refunded` | Pagamento cancelado após 23:59 do dia de autorização |
+      | `Pending` | Aguardando Status de instituição financeira |
+      | `Aborted` | Pagamento cancelado por falha no processamento ou por ação do AF |
+      | `Scheduled` | Recorrência agendada |
+
 servers:
   - url: https://api-sandbox.proxypay.com.br/v1
     description: Endpiont Sandbox v1 (usa dados de teste)
 
+x-tagGroups:
+- name: Sobre
+  tags:
+    - Quem somos
+- name: Ref. códigos da API
+  tags:
+    - Códigos de retorno para criação de transações
+    - Lista de situações da transação
+- name: Endpoints
+  tags:
+    - Transação
+
 paths:
   /transaction:
     post:
-      summary: "Criar transação"
+      tags:
+        - Transação
+      summary: "Criação"
       requestBody:
         required: true
         content:
@@ -118,7 +130,9 @@ paths:
                 $ref: "#/components/schemas/ValidationError"
   /transaction/{gatewayCode}/{transactionId}:
     get:
-      summary: "Obter transação"
+      tags:
+        - Transação
+      summary: "Consulta"
       parameters:
         - in: path
           name: "gatewayCode"
@@ -144,7 +158,10 @@ paths:
         404:
           description: "Transação não encontrada"
     put:
-      summary: "Capturar transação autenticada"
+      tags:
+        - Transação
+      summary: "Captura"
+      description: "Captura uma transação previamente autorizada"
       parameters:
         - in: path
           name: "gatewayCode"
@@ -177,7 +194,9 @@ paths:
           description: "Transação não encontrada"
   /transaction/{gatewayCode}/{transactionId}/refunds:
     post:
-      summary: "Cancelar transação"
+      tags:
+        - Transação
+      summary: "Cancelamento"
       parameters:
         - in: path
           name: "gatewayCode"
@@ -284,7 +303,7 @@ components:
           example: true
         status:
           type: "string"
-          description: "Status da criação da transação. Veja a lista completa [aqui](#section/Codigos-de-retorno-para-criacao-de-transacoes)"
+          description: "Status da criação da transação. Veja a lista completa [aqui](#tag/Codigos-de-retorno-para-criacao-de-transacoes)"
           enum:
             - Success
             - GenericError
@@ -336,7 +355,7 @@ components:
           example: true
         status:
           type: "string"
-          description: "Situação da transação. Veja a descrição completa [aqui](#section/Lista-de-situações-da-transação)"
+          description: "Situação da transação. Veja a descrição completa [aqui](#tag/Lista-de-situacoes-da-transacao)"
           enum:
             - "NotFinished"
             - "Authorized"
