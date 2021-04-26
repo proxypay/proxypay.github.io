@@ -2,11 +2,11 @@ openapi: 3.0.0
 info:
   title: "ProxyPay API"
   description: |
-    API responsible for abstract payment gateways with simple endpoints
+    API responsável por abstrair gateways de pagamento (adquirentes e subadquirentes) por meio de endpoints únicos.
 
-    ## Transaction creation status codes
+    ## Códigos de retorno para criação de transações
 
-    | status | success? | desc |
+    | status | sucesso? | descrição |
     |:-------|:----|:--------|
     | `Success` | yes | Sucesso |
     | `GenericError` | no | Genérica |
@@ -69,10 +69,9 @@ info:
     | `ApprovedTransactionCancel` | no | Transação de cancelamento autorizada com sucesso. atençâo: esse retorno é para casos de cancelamentos e não para casos de autorizações. |
 
 
-    ## Transaction status
+    ## Lista de situações da transação
 
-
-    | Status | Description |
+    | Status | Descrição |
     | :------- | :--------- |
     | `NotFinished` | Aguardando atualização de status |
     | `Authorized` | Pagamento apto a ser capturado ou definido como pago |
@@ -88,16 +87,16 @@ info:
   x-logo:
     url: "/imgs/logo.webp"
     backgroundColor: "#FFFFFF"
-    altText: "ProxyPay API Docs"
+    altText: "ProxyPay API - Documentação"
 
 servers:
   - url: https://api-sandbox.proxypay.com.br/v1
-    description: Sandbox server v1 (uses test data)
+    description: Endpiont Sandbox v1 (usa dados de teste)
 
 paths:
   /transaction:
     post:
-      summary: "Create transaction"
+      summary: "Criar transação"
       requestBody:
         required: true
         content:
@@ -106,60 +105,60 @@ paths:
               $ref: "#/components/schemas/TransactionCreation"
       responses:
         200:
-          description: "Successful operation"
+          description: "Sucesso"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/TransactionCreationResult"
         400:
-          description: "Validation error"
+          description: "Erro de validação"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationError"
   /transaction/{gatewayCode}/{transactionId}:
     get:
-      summary: "Get transaction"
+      summary: "Obter transação"
       parameters:
         - in: path
           name: "gatewayCode"
           schema:
             type: "string"
           required: true
-          description: "Gateway code where transaction was created"
+          description: "Código do gateway onde a transação foi criada"
           example: "cielo"
         - in: path
           name: "transactionId"
           schema:
             type: "string"
           required: true
-          description: "Transaction id created by gateway"
+          description: "Id da transação gerada pelo gateway na criação"
           example: "13adc203-bb0a-4f5f-932e-3e6350e18504"
       responses:
         200:
-          description: "Transaction"
+          description: "Transação"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Transaction"
         404:
-          description: "Transaction not found"
+          description: "Transação não encontrada"
     put:
-      summary: "Capture authorized transaction"
+      summary: "Capturar transação autenticada"
       parameters:
         - in: path
           name: "gatewayCode"
           schema:
             type: "string"
           required: true
-          description: "Gateway code where transaction was created"
+          description: "Código do gateway onde a transação foi criada"
           example: "cielo"
         - in: path
           name: "transactionId"
           schema:
             type: "string"
           required: true
-          description: "Transaction id created by gateway"
+          description: "Id da transação gerada pelo gateway na criação"
           example: "13adc203-bb0a-4f5f-932e-3e6350e18504"
       requestBody:
         required: true
@@ -169,30 +168,30 @@ paths:
               $ref: "#/components/schemas/TransactionCapture"
       responses:
         200:
-          description: "Success capture"
+          description: "Sucesso"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/TransactionCaptureResult"
         404:
-          description: "Transaction not found"
+          description: "Transação não encontrada"
   /transaction/{gatewayCode}/{transactionId}/refunds:
     post:
-      summary: "Refund captured transaction"
+      summary: "Cancelar transação"
       parameters:
         - in: path
           name: "gatewayCode"
           schema:
             type: "string"
           required: true
-          description: "Gateway code where transaction was created"
+          description: "Código do gateway onde a transação foi criada"
           example: "cielo"
         - in: path
           name: "transactionId"
           schema:
             type: "string"
           required: true
-          description: "Transaction id created by gateway"
+          description: "Id da transação gerada pelo gateway na criação"
           example: "13adc203-bb0a-4f5f-932e-3e6350e18504"
       requestBody:
         required: true
@@ -202,13 +201,13 @@ paths:
               $ref: "#/components/schemas/TransactionRefund"
       responses:
         200:
-          description: "Success refund"
+          description: "Sucesso"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/TransactionRefundResult"
         404:
-          description: "Transaction not found"
+          description: "Transação não encontrada"
 
 security:
   - clientIdAndSecretBasic: []
@@ -217,13 +216,13 @@ components:
   securitySchemes:
     clientIdAndSecretBasic:
       description: >
-        To access API endpoints you must use `clientId` and `clientSecret` with HTTP Basic Auth. E.g.:
+        Para acessar os endpints da API é necessário usar HTTP Basic Auth com um `clientId` e `clientSecret`. Exemplo:
 
 
-        Using `clientId` as `my-client-id` and `clientSecret` as `my-client-secret`.
+        Usando `my-client-id` como `clientId` e `my-client-secret` como `clientSecret`:
 
 
-        Join then with `:` and encode with base64, resulting in `bXktY2xpZW50LWlkOm15LWNsaWVudC1zZWNyZXQ=`, so your `Authorization` header will be:
+        Junte ambos com `:` e codifique em base64, no exemplo, o resultado é `bXktY2xpZW50LWlkOm15LWNsaWVudC1zZWNyZXQ=`. Então, seu header `Authorization` será:
 
 
         `Authorization: Basic bXktY2xpZW50LWlkOm15LWNsaWVudC1zZWNyZXQ=`.
@@ -242,50 +241,50 @@ components:
       properties:
         capture:
           type: "boolean"
-          description: "Flag to capture amount (`true`) or just Authorize (`false`): **Default:** `false`"
+          description: "Flag para capturar a quantia enviada (`true`) ou apenas autorizar (`false`): **Default:** `false`"
           example: true
         reference:
           type: "string"
-          description: "Used to identify transaction (line store order number). **Length <= 16**"
+          description: "Usado para identificar a transacão (ex. num. do pedido no sistema do comerciante). **Comprimento <= 16**"
           example: "my-unique-order-number-1234"
         amount:
           type: "integer"
-          description: "Amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`). Value >= 1"
+          description: "Valor da transação em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`). **Valor >= 1**"
           example: 100050
         installments:
           type: "integer"
-          description: "Installments number. **Value >= 1 and <= 255**. Default: `1`"
+          description: "Número de parcelas. **Valor >= 1 e <= 255. Default:** `1`"
           example: 12
         cardNumber:
           type: "string"
-          description: "Card number, only numbers. E.g.: for a card number *5555.5555.5555.4444* you should use `5555555555554444`"
+          description: "Número do cartão, apenas números. Ex: para o número *5555.5555.5555.4444* será enviado `5555555555554444`"
           example: "5555555555554444"
         expirationMonth:
           type: "integer"
-          description: "Card expiration month, only numbers. Value between `1` and `12`"
+          description: "Mês de expiração do cartão, apenas números. Valores entre `1` e `12`"
           example: 11
         expirationYear:
           type: "integer"
-          description: "Card expiration year, only numbers. Format *9999*, E.g: `2028`"
+          description: "Ano de expiração do cartão, apenas números. Formato *9999*, Ex: `2028`"
           example: 2028
         cardHolderName:
           type: "string"
-          description: "Card holder name, E.g.: `JOHN DOE`"
+          description: "Nome impresso no cartão, Ex: `JOAO DA SILVA`"
           example: "JOHN DOE"
         securityCode:
           type: "string"
-          description: "Security code, format *999*, E.g.: `123`"
+          description: "Codigo de segurança (CVV), formato *999*, E.g.: `123`"
           example: "123"
     TransactionCreationResult:
       type: "object"
       properties:
         success:
           type: "boolean"
-          description: "Transaction made with success (`true`) or not (`false`)"
+          description: "Transação feita com sucesso (`true`) ou não (`false`)"
           example: true
         status:
           type: "string"
-          description: "Transaction creation status. Check full list [here](#section/Transaction-creation-status-codes)"
+          description: "Status da criação da transação. Veja a lista completa [aqui](#section/Codigos-de-retorno-para-criacao-de-transacoes)"
           enum:
             - Success
             - GenericError
@@ -294,31 +293,31 @@ components:
           example: Success
         gatewayCode:
           type: "string"
-          description: "Gateway code used in this transaction"
+          description: "Código do gateway usado na transação"
           example: "cielo"
         gatewayReturnCode:
           type: "string"
-          description: "Raw code returned by gateway"
+          description: "Código retornado pelo gateway sem tratamento"
           example: "00"
         gatewayReturnMessage:
           type: "string"
-          description: "Raw messsage returned by gateway"
+          description: "Mensagem retornada pelo gateway sem tratamento"
           example: "Operation Successful"
         cardBrand:
           type: "string"
-          description: "Card brand returned by gateway"
+          description: "Bandeira do cartão retornada pelo gateway"
           example: "visa"
         reference:
           type: "string"
-          description: "Used to identify transaction (line store order number)"
+          description: "Usado para identificar a transacão (ex. num do pedido no sistema do comerciante)"
           example: "my-unique-order-number-1234"
         transactionId:
           type: "string"
-          description: "Transaction identification"
+          description: "Identificador da transação. Neste caso, um UUID, porém **esse valor é gerado pelo Gateway**, portanto considere qualquer string para identificação pois cada gateway utiliza um tipo de ID diferente."
           example: "13adc203-bb0a-4f5f-932e-3e6350e18504"
         authCode:
           type: "string"
-          description: "Authorization code returned by card issuer"
+          description: "Código de autorização retornado pelo emissor"
           example: "760946"
         links:
           type: "array"
@@ -329,15 +328,15 @@ components:
       properties:
         id:
           type: "string"
-          description: "Transaction identification. As example here it's an uuid, but it's generated by gateway, so consider any string"
+          description: "Identificador da transação. Neste caso, um UUID, porém **esse valor é gerado pelo Gateway**, portanto considere qualquer string para identificação pois cada gateway utiliza um tipo de ID diferente."
           example: "13adc203-bb0a-4f5f-932e-3e6350e18504"
         success:
           type: "boolean"
-          description: "Transaction made with success (`true`) or not (`false`)"
+          description: "Transação feita com sucesso (`true`) ou não (`false`)"
           example: true
         status:
           type: "string"
-          description: "Transaction status. Check descriptions [here](#section/Transaction-status)"
+          description: "Situação da transação. Veja a descrição completa [aqui](#section/Lista-de-situações-da-transação)"
           enum:
             - "NotFinished"
             - "Authorized"
@@ -351,47 +350,47 @@ components:
           example: "Authorized"
         reference:
           type: "string"
-          description: "Used to identify transaction (line store order number)"
+          description: "Usado para identificar a transacão (ex. num do pedido no sistema do comerciante)"
           example: "my-unique-order-number-1234"
         amount:
           type: "integer"
-          description: "Amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`)."
+          description: "Valor da transação em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`)."
           example: 100050
         installments:
           type: "integer"
-          description: "Installments number"
+          description: "Número de parcelas"
           example: 12
         currency:
           type: "string"
-          description: "Currency code"
+          description: "Código da moeda"
           example: "BRL"
         cardBin:
           type: "string"
-          description: "Card bin. First 6 digits"
+          description: "Bin do cartão (primeiros 6 dígitos)"
           example: "555555"
         cardLastDigits:
           type: "string"
-          description: "Card last digigs. Last 4 digits"
+          description: "Últimos 4 dígitos do cartão"
           example: "4444"
         expirationMonth:
           type: "integer"
-          description: "Card expiration month, only numbers."
+          description: "Mês de expiração do cartão"
           example: 11
         expirationYear:
           type: "integer"
-          description: "Card expiration year, only numbers. Format *9999*"
+          description: "Ano de expiraçao do cartão"
           example: 2028
         cardHolderName:
           type: "string"
-          description: "Card holder name, E.g.: `JOHN DOE`"
+          description: "Nome impresso no cartão, E.g.: `JOAO DA SILVA`"
           example: "JOHN DOE"
         softDescriptor:
           type: "string"
-          description: "Used to identify transaction (line store order number). **Length <= 13**"
-          example: "MAGAZINE Y"
+          description: "Usado para identificar a transacão na fatura do cliente. **Comprimento <= 13**"
+          example: "MENSALIDADE"
         authCode:
           type: "string"
-          description: "Authorization code returned by card issuer"
+          description: "Código de autorização retornado pelo emissor"
           example: "760946"
         capture:
           $ref: "#/components/schemas/Refund"
@@ -403,73 +402,73 @@ components:
             $ref: "#/components/schemas/Link"
     Capture:
       type: "object"
-      description: "If transaction was captured, these values will be filled"
+      description: "Caso a transação tenha sido capturada esses valores virão preenchidos"
       properties:
         dateTime:
           type: "string"
-          description: "Capture datetime, ISO datetime"
+          description: "Data e hora da captura em formato ISO"
           example: "2021-04-17T15:51:18-03:00"
         amount:
           type: "int"
-          description: "Capture amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`)"
+          description: "Valor da captura em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`)."
           example: 2000
     Refund:
       type: "object"
-      description: "If transaction was voided/refunded, these values will be filled"
+      description: "Caso a transação tenha sido cancelada esses valores virão preenchidos"
       properties:
         dateTime:
           type: "string"
-          description: "Refund datetime, ISO datetime"
+          description: "Data e hora do cancelamento em formato ISO"
           example: "2021-04-18T15:51:18-03:00"
         amount:
           type: "int"
-          description: "Refund amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`)"
+          description: "Valor do cancelamento em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`)."
           example: 2000
     Link:
       type: "object"
       properties:
         method:
           type: "string"
-          description: "HTTP Method used for this link"
+          description: "Método HTTP"
           example: "PUT"
         rel:
           type: "string"
-          description: "Link relationship with transaction"
+          description: "Relação do endpoint com a transação"
           example: "capture"
         url:
           type: "string"
-          description: "Link path to be used"
+          description: "Path para a operação"
           example: "/v1/transaction/cielo/13adc203-bb0a-4f5f-932e-3e6350e18504"
     TransactionCapture:
       type: "object"
-      description: "Capture a transaction"
+      description: "Capturar a transação"
       properties:
         amount:
           type: "int"
-          description: "Capture amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`)"
+          description: "Valor da captura em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`)."
           example: 2000
     TransactionCaptureResult:
       type: "object"
       properties:
         success:
           type: "boolean"
-          description: "Transaction captured with success (`true`) or not (`false`)"
+          description: "Transação capturada com sucesso (`true`) ou não (`false`)"
           example: true
         gatewayCode:
           type: "string"
-          description: "Gateway code used in this transaction"
+          description: "Código do gateway usado nessa transação"
           example: "cielo"
         gatewayReturnCode:
           type: "string"
-          description: "Raw code returned by gateway"
+          description: "Código retornado pelo gateway sem tratamento"
           example: "00"
         gatewayReturnMessage:
           type: "string"
-          description: "Raw messsage returned by gateway"
+          description: "Mensagem retornada pelo gateway sem tratamento"
           example: "Operation Successful"
         authCode:
           type: "string"
-          description: "Authorization code returned by card issuer"
+          description: "Código de autorização retornado pelo emissor"
           example: "760946"
         links:
           type: "array"
@@ -477,30 +476,30 @@ components:
             $ref: "#/components/schemas/Link"
     TransactionRefund:
       type: "object"
-      description: "Refund a transaction"
+      description: "Cancelamento de transação"
       properties:
         amount:
           type: "int"
-          description: "Refund amount in cents, with no separation. E.g.: R$ 0,50 => `50` or R$ 1000,50 => `100050`)"
+          description: "Valor do cancelamento em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`)."
           example: 2000
     TransactionRefundResult:
       type: "object"
       properties:
         success:
           type: "boolean"
-          description: "Transaction voided with success (`true`) or not (`false`)"
+          description: "Transação capturada com sucesso (`true`) ou não (`false`)"
           example: true
         gatewayCode:
           type: "string"
-          description: "Gateway code used in this transaction"
+          description: "Código do gateway usado nessa transação"
           example: "cielo"
         gatewayReturnCode:
           type: "string"
-          description: "Raw code returned by gateway"
+          description: "Código retornado pelo gateway sem tratamento"
           example: "00"
         gatewayReturnMessage:
           type: "string"
-          description: "Raw messsage returned by gateway"
+          description: "Mensagem retornada pelo gateway sem tratamento"
           example: "Operation Successful"
         links:
           type: "array"
@@ -509,7 +508,7 @@ components:
     ValidationError:
       type: "object"
       properties:
-        "[field name]":
+        "[nome do campo]":
           type: "string"
-          description: "Error message"
+          description: "Mensagem de erro"
           example: "must be no less than 1"
