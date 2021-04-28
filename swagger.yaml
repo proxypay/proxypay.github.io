@@ -86,6 +86,8 @@ tags:
       | `Pending` | Aguardando Status de instituição financeira |
       | `Aborted` | Pagamento cancelado por falha no processamento ou por ação do AF |
       | `Scheduled` | Recorrência agendada |
+  - name: "Postman collection"
+    description: https://documenter.getpostman.com/view/483953/TzCMeUQF
 
 servers:
   - url: https://api-sandbox.proxypay.com.br/v1
@@ -97,6 +99,7 @@ x-tagGroups:
     - Quem somos
 - name: Ref. códigos da API
   tags:
+    - Postman collection
     - Códigos de retorno para criação de transações
     - Lista de situações da transação
 - name: Endpoints
