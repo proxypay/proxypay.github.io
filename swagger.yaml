@@ -3,7 +3,7 @@ info:
   title: "ProxyPay API"
   version: "1.0.0"
   x-logo:
-    url: "/imgs/logo.webp"
+    url: "/imgs/proxypay-docs.png"
     backgroundColor: "#FFFFFF"
     altText: "ProxyPay API - Documentação"
 
