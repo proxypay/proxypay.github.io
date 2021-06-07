@@ -387,7 +387,7 @@ components:
           example: 2999
         quantity:
           type: "integer"
-          description: "Quantidade de uniades do item"
+          description: "Quantidade de unidades do item"
           example: 2
     TransactionCreationResult:
       type: "object"
