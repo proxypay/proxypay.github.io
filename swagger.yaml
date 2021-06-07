@@ -605,7 +605,7 @@ components:
         city:
           type: "string"
           description: "Cidade do endereço"
-          example: "Rua X"
+          example: "São Paulo"
         state:
           type: "string"
           description: "Estado do endereço"
