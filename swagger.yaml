@@ -315,7 +315,7 @@ components:
               example: "José Alencar"
             email:
               type: "string"
-              description: "Email do cliente"
+              description: "E-mail do cliente"
               example: "jose@alencar.com"
             type:
               type: "string"
