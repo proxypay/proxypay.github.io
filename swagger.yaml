@@ -86,6 +86,13 @@ tags:
       | `Pending` | Aguardando Status de instituição financeira |
       | `Aborted` | Pagamento cancelado por falha no processamento ou por ação do AF |
       | `Scheduled` | Recorrência agendada |
+  - name: Lista de situações da transação de antifraude
+    description: |-
+      | Status | Descrição |
+      | :------- | :--------- |
+      | `UNKNOWN` | Situação não mapeada |
+      | `APPROVED` | Transação aprovada no sistema antifraude |
+      | `REJECTED` | Transação não aprovada no sistema antifraude |
   - name: "Postman collection"
     description: https://documenter.getpostman.com/view/483953/TzCMeUQF
 
@@ -449,7 +456,7 @@ components:
           example: true
         status:
           type: "string"
-          description: "Status da criação da transação. Veja a lista completa [aqui](#tag/Codigos-de-retorno-para-criacao-de-transacoes)"
+          description: "Status da criação da transação de antifraude. Veja a lista completa [aqui](#tag/Lista-de-situacoes-da-transacao-de-antifraude)"
           enum:
             - UNKNOWN
             - APPROVED
