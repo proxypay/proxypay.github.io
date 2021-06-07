@@ -609,7 +609,7 @@ components:
         state:
           type: "string"
           description: "Estado do endereço"
-          example: "Rua X"
+          example: "SP"
         zipcode:
           type: "string"
           description: "Código postal do endereço"
