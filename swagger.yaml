@@ -86,12 +86,19 @@ tags:
       | `Pending` | Aguardando Status de instituição financeira |
       | `Aborted` | Pagamento cancelado por falha no processamento ou por ação do AF |
       | `Scheduled` | Recorrência agendada |
+  - name: Lista de situações da transação de antifraude
+    description: |-
+      | Status | Descrição |
+      | :------- | :--------- |
+      | `UNKNOWN` | Situação não mapeada |
+      | `APPROVED` | Transação aprovada no sistema antifraude |
+      | `REJECTED` | Transação não aprovada no sistema antifraude |
   - name: "Postman collection"
     description: https://documenter.getpostman.com/view/483953/TzCMeUQF
 
 servers:
   - url: https://api-sandbox.proxypay.com.br/v1
-    description: Endpiont Sandbox v1 (usa dados de teste)
+    description: Endpoint Sandbox v1 (usa dados de teste)
 
 x-tagGroups:
 - name: Sobre
@@ -238,7 +245,7 @@ components:
   securitySchemes:
     clientIdAndSecretBasic:
       description: >
-        Para acessar os endpints da API é necessário usar HTTP Basic Auth com um `clientId` e `clientSecret`. Exemplo:
+        Para acessar os endpoints da API é necessário usar HTTP Basic Auth com um `clientId` e `clientSecret`. Exemplo:
 
 
         Usando `my-client-id` como `clientId` e `my-client-secret` como `clientSecret`:
@@ -297,6 +304,98 @@ components:
           type: "string"
           description: "Codigo de segurança (CVV), formato *999*, E.g.: `123`"
           example: "123"
+        currency:
+          type: "string"
+          description: "Código ISO 4217 da moeda"
+          example: "BRL"
+        customer:
+          type: "object"
+          description: "Informações do cliente"
+          properties:
+            id:
+              type: "string"
+              description: "Id do cliente"
+              example: "123"
+            name:
+              type: "string"
+              description: "Nome do cliente"
+              example: "José Alencar"
+            email:
+              type: "string"
+              description: "E-mail do cliente"
+              example: "jose@alencar.com"
+            type:
+              type: "string"
+              description: "Tipo do cliente (\"NATURAL_PERSON\" para pessoa física e \"LEGAL_ENTITY\" para pessoa jurídica)"
+              enum:
+                - NATURAL_PERSON
+                - LEGAL_ENTITY
+              example: "NATURAL_PERSON"
+            primaryPhone:
+              type: "string"
+              description: "Telefone principal do cliente"
+              example: "11912345678"
+            secondaryPhone:
+              type: "string"
+              description: "Telefone secundário do cliente"
+              example: "1112345678"
+        billing:
+          type: "object"
+          description: "Informações de cobrança"
+          properties:
+            name:
+              type: "string"
+              description: "Nome utilizado para cobrança"
+              example: "João Souza"
+            document:
+              type: "string"
+              description: "Documento utilizado para cobrança"
+              example: "12345678900"
+            address:
+              $ref: "#/components/schemas/Address"
+              description: "Endereço utilizado para cobrança"
+        shipping:
+          type: "object"
+          description: "Informações de entrega"
+          properties:
+            name:
+              type: "string"
+              description: "Nome utilizado para entrega"
+              example: "João Souza"
+            document:
+              type: "string"
+              description: "Documento utilizado para entrega"
+              example: "12345678900"
+            address:
+              $ref: "#/components/schemas/Address"
+              description: "Endereço utilizado para entrega"
+        items:
+          type: "array"
+          description: "Itens da compra relacionada à transação"
+          $ref: "#/components/schemas/TransactionCreationItem"
+    TransactionCreationItem:
+      type: "object"
+      properties:
+        code:
+          type: "string"
+          description: "Código único do item"
+          example: "92821982"
+        barCode:
+          type: "string"
+          description: "Código de barras item"
+          example: "1128731289738219"
+        name:
+          type: "string"
+          description: "Nome item"
+          example: "Boné Preto"
+        unitCost:
+          type: "integer"
+          description: "Valor do item em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`). **Valor >= 1**"
+          example: 2999
+        quantity:
+          type: "integer"
+          description: "Quantidade de unidades do item"
+          example: 2
     TransactionCreationResult:
       type: "object"
       properties:
@@ -345,6 +444,36 @@ components:
           type: "array"
           items:
             $ref: "#/components/schemas/Link"
+        antifraudResult:
+          description: "Se habilitado, resultado do processamento do sistema antifraude"
+          $ref: "#/components/schemas/TransactionCreationAntifraudResult"
+    TransactionCreationAntifraudResult:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          description: "Transação antifraude feita com sucesso (`true`) ou não (`false`)"
+          example: true
+        status:
+          type: "string"
+          description: "Status da criação da transação de antifraude. Veja a lista completa [aqui](#tag/Lista-de-situacoes-da-transacao-de-antifraude)"
+          enum:
+            - UNKNOWN
+            - APPROVED
+            - REJECTED
+          example: APPROVED
+        antifraudCode:
+          type: "string"
+          description: "Código do sistema antifraude usado na transação"
+          example: "clearsale"
+        antifraudReturnCode:
+          type: "string"
+          description: "Código retornado pelo sistema antifraude sem tratamento"
+          example: "APA"
+        antifraudReturnMessage:
+          type: "string"
+          description: "Mensagem retornada pelo sistema antifraude sem tratamento"
+          example: "Order created"
     Transaction:
       type: "object"
       properties:
@@ -431,7 +560,7 @@ components:
           description: "Data e hora da captura em formato ISO"
           example: "2021-04-17T15:51:18-03:00"
         amount:
-          type: "int"
+          type: "integer"
           description: "Valor da captura em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`)."
           example: 2000
     Refund:
@@ -443,7 +572,7 @@ components:
           description: "Data e hora do cancelamento em formato ISO"
           example: "2021-04-18T15:51:18-03:00"
         amount:
-          type: "int"
+          type: "integer"
           description: "Valor do cancelamento em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`)."
           example: 2000
     Link:
@@ -461,12 +590,47 @@ components:
           type: "string"
           description: "Path para a operação"
           example: "/v1/transaction/cielo/13adc203-bb0a-4f5f-932e-3e6350e18504"
+    Address:
+      type: "object"
+      properties:
+        street:
+          type: "string"
+          description: "Rua do endereço"
+          example: "Rua X"
+        number:
+          type: "string"
+          description: "Número do endereço"
+          example: "911"
+        complement:
+          type: "string"
+          description: "Complemento do endereço"
+          example: "Ap 91"
+        neighborhood:
+          type: "string"
+          description: "Bairro do endereço"
+          example: "Vila Clementino"
+        city:
+          type: "string"
+          description: "Cidade do endereço"
+          example: "São Paulo"
+        state:
+          type: "string"
+          description: "Estado do endereço"
+          example: "SP"
+        zipcode:
+          type: "string"
+          description: "Código postal do endereço"
+          example: "01122000"
+        country:
+          type: "string"
+          description: "Páis do endereço (ISO 3166-2)"
+          example: "BR"
     TransactionCapture:
       type: "object"
       description: "Capturar a transação"
       properties:
         amount:
-          type: "int"
+          type: "integer"
           description: "Valor da captura em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`)."
           example: 2000
     TransactionCaptureResult:
@@ -501,7 +665,7 @@ components:
       description: "Cancelamento de transação"
       properties:
         amount:
-          type: "int"
+          type: "integer"
           description: "Valor do cancelamento em centavos. Ex.: R$ 0,50 => `50` ou R$ 1000,50 => `100050`)."
           example: 2000
     TransactionRefundResult:
