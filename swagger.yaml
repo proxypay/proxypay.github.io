@@ -373,6 +373,30 @@ components:
           type: "array"
           description: "Itens da compra relacionada à transação"
           $ref: "#/components/schemas/TransactionCreationItem"
+        gateway:
+          type: "object"
+          description: "Gateway desejado. Utilizado para forçar o uso de um gateway específico. É possível utilizar gateways com o status *homologação*."
+          properties:
+            id:
+              type: "integer"
+              description: "Id do gateway"
+              example: "99"
+            code:
+              type: "string"
+              description: "Código do gateway (`cielo`, `rede`...)"
+              example: "cielo"
+        antifraud:
+          type: "object"
+          description: "Antifraude desejado. Utilizado para forçar o uso de um antifraude específico. É possível utilizar antifraudes com o status *homologação*."
+          properties:
+            id:
+              type: "integer"
+              description: "Id do antifraude"
+              example: "99"
+            code:
+              type: "string"
+              description: "Código do antifraude"
+              example: "clearsale"
     TransactionCreationItem:
       type: "object"
       properties:
