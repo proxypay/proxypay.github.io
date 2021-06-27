@@ -106,7 +106,6 @@ x-tagGroups:
     - Quem somos
 - name: Ref. códigos da API
   tags:
-    - Postman collection
     - Códigos de retorno para criação de transações
     - Lista de situações da transação
 - name: Endpoints
