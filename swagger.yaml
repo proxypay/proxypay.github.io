@@ -805,9 +805,10 @@ components:
           description: "Antecipação automática. Default: `false`"
         partners:
           type: "array"
-          description: "Sócios"
+          description: "Sócios. **Obrigatório ao menos 1 sócio**"
           items:
-            $ref: "#/components/schemas/CompanyPartner"
+            oneOf:
+              - $ref: "#/components/schemas/CompanyPartner"
         ecommerceContacts:
           type: "array"
           description: "Contatos e-commerce"
