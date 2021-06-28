@@ -803,73 +803,21 @@ components:
           type: "boolean"
           description: "Antecipação automática"
         partners:
-          type: "object"
+          type: "array"
           description: "Sócios"
-          required:
-            - "fullName"
-            - "partnerType"
-            - "documentNumber"
-          properties:
-            fullName:
-              type: "string"
-              description: "Nome do sócio / razao social"
-              example: "Joao da Silva"
-            partnerType:
-              type: "string"
-              description: "Tipo de pessoa: Física / Jurídica"
-              enum:
-                - person
-                - company
-              example: "person"
-            documentNumber:
-              type: "string"
-              description: "Num. do documento CPF/CNPJ. **Apenas números**"
-              example: "09203677000100"
+          items:
+            $ref: "#/components/schemas/CompanyPartners"
         ecommerceContacts:
-          type: "object"
+          type: "array"
           description: "Contatos e-commerce"
-          required:
-            - "fullName"
-            - "phoneNumber"
-            - "email"
-            - "siteUrl"
-          properties:
-            fullName:
-              type: "string"
-              description: "Nome completo"
-              example: "Joao da Silva"
-            phoneNumber:
-              type: "string"
-              description: "Num. de telefone. **Apenas números**"
-              example: "11966668888"
-            email:
-              type: "string"
-              description: "E-mail"
-              example: "foo@bar.com.br"
-            siteUrl:
-              type: "string"
-              description: "URL do site"
-              example: "https://www.foo.com.br/"
-        businessContact:
-          type: "object"
+          items:
+            $ref: "#/components/schemas/CompanyEcommerceContact"
+        businessContacts:
+          type: "array"
           description: "Contatos comerciais"
-          required:
-            - "fullName"
-            - "phoneNumber"
-            - "email"
-          properties:
-            fullName:
-              type: "string"
-              description: "Nome completo"
-              example: "Joao da Silva"
-            phoneNumber:
-              type: "string"
-              description: "Num. de telefone. **Apenas números**"
-              example: "11966668888"
-            email:
-              type: "string"
-              description: "E-mail"
-              example: "foo@bar.com.br"
+          items:
+            $ref: "#/components/schemas/CompanyBusinessContact"
+
     CompanyCreationResponse:
       type: "object"
       properties:
@@ -905,70 +853,88 @@ components:
           type: "boolean"
           description: "Antecipação automática"
         partners:
-          type: "object"
+          type: "array"
           description: "Sócios"
-          required:
-            - "fullName"
-            - "partnerType"
-            - "documentNumber"
-          properties:
-            fullName:
-              type: "string"
-              description: "Nome do sócio / razao social"
-              example: "Joao da Silva"
-            partnerType:
-              type: "string"
-              description: "Tipo de pessoa: Física / Jurídica"
-              enum:
-                - person
-                - company
-              example: "person"
-            documentNumber:
-              type: "string"
-              description: "Num. do documento CPF/CNPJ. **Apenas números**"
-              example: "09203677000100"
+          items:
+            $ref: "#/components/schemas/CompanyPartners"
         ecommerceContacts:
-          type: "object"
+          type: "array"
           description: "Contatos e-commerce"
-          required:
-            - "fullName"
-            - "phoneNumber"
-            - "email"
-            - "siteUrl"
-          properties:
-            fullName:
-              type: "string"
-              description: "Nome completo"
-              example: "Joao da Silva"
-            phoneNumber:
-              type: "string"
-              description: "Num. de telefone. **Apenas números**"
-              example: "11966668888"
-            email:
-              type: "string"
-              description: "E-mail"
-              example: "foo@bar.com.br"
-            siteUrl:
-              type: "string"
-              description: "URL do site"
-              example: "https://www.foo.com.br/"
-        businessContact:
-          type: "object"
+          items:
+            $ref: "#/components/schemas/CompanyEcommerceContact"
+        businessContacts:
+          type: "array"
           description: "Contatos comerciais"
-          required:
-            - "fullName"
-            - "phoneNumber"
-            - "email"
-          properties:
-            fullName:
-              type: "string"
-              description: "Nome completo"
-              example: "Joao da Silva"
-            phoneNumber:
-              type: "string"
-              description: "Num. de telefone. **Apenas números**"
-              example: "11966668888"
-            email:
-              type: "string"
-              description: "E-mail"
-              example: "foo@bar.com.br"
+          items:
+            $ref: "#/components/schemas/CompanyBusinessContact"
+
+    CompanyPartners:
+        type: "object"
+        description: "Sócio"
+        required:
+          - "fullName"
+          - "partnerType"
+          - "documentNumber"
+        properties:
+          fullName:
+            type: "string"
+            description: "Nome do sócio / razao social"
+            example: "Joao da Silva"
+          partnerType:
+            type: "string"
+            description: "Tipo de pessoa: Física / Jurídica"
+            enum:
+              - person
+              - company
+            example: "person"
+          documentNumber:
+            type: "string"
+            description: "Num. do documento CPF/CNPJ. **Apenas números**"
+            example: "36730757051"
+
+    CompanyEcommerceContact:
+      type: "object"
+      description: "Contato e-commerce"
+      required:
+        - "fullName"
+        - "phoneNumber"
+        - "email"
+        - "siteUrl"
+      properties:
+        fullName:
+          type: "string"
+          description: "Nome completo"
+          example: "Joao da Silva"
+        phoneNumber:
+          type: "string"
+          description: "Num. de telefone. **Apenas números**"
+          example: "11966668888"
+        email:
+          type: "string"
+          description: "E-mail"
+          example: "foo@bar.com.br"
+        siteUrl:
+          type: "string"
+          description: "URL do site"
+          example: "https://www.foo.com.br/"
+
+    CompanyBusinessContact:
+      type: "object"
+      description: "Contato comercial"
+      required:
+        - "fullName"
+        - "phoneNumber"
+        - "email"
+      properties:
+        fullName:
+          type: "string"
+          description: "Nome completo"
+          example: "Joao da Silva"
+        phoneNumber:
+          type: "string"
+          description: "Num. de telefone. **Apenas números**"
+          example: "11966668888"
+        email:
+          type: "string"
+          description: "E-mail"
+          example: "foo@bar.com.br"
