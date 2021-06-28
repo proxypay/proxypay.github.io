@@ -806,7 +806,7 @@ components:
           type: "array"
           description: "Sócios"
           items:
-            $ref: "#/components/schemas/CompanyPartners"
+            $ref: "#/components/schemas/CompanyPartner"
         ecommerceContacts:
           type: "array"
           description: "Contatos e-commerce"
@@ -856,7 +856,7 @@ components:
           type: "array"
           description: "Sócios"
           items:
-            $ref: "#/components/schemas/CompanyPartners"
+            $ref: "#/components/schemas/CompanyPartner"
         ecommerceContacts:
           type: "array"
           description: "Contatos e-commerce"
@@ -868,7 +868,7 @@ components:
           items:
             $ref: "#/components/schemas/CompanyBusinessContact"
 
-    CompanyPartners:
+    CompanyPartner:
         type: "object"
         description: "Sócio"
         required:
