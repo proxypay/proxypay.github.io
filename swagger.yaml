@@ -774,6 +774,7 @@ components:
         - "name"
         - "legalName"
         - "documentNumber"
+        - "openedAt"
       properties:
         name:
           type: "string"
@@ -801,7 +802,7 @@ components:
           example: "Av. Avenida Augusto Maynard, 1990 - São José - Aracaju/SE - CEP 49015-380"
         automaticAntecipation:
           type: "boolean"
-          description: "Antecipação automática"
+          description: "Antecipação automática. Default: `false`"
         partners:
           type: "array"
           description: "Sócios"
