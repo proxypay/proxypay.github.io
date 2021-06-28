@@ -10,6 +10,13 @@ info:
 tags:
   - name: "Quem somos"
     description: API responsável por abstrair gateways de pagamento (adquirentes e subadquirentes) por meio de endpoints únicos.
+  - name: "APIs"
+    description: |-
+      Trabalhamos com duas API's distintas para uso administrativo e para pagamentos.
+
+      Para cada uma deve-se usar um token específico, respectivamente, administrativo e de pagamentos. Ambos podem ser gerados na página administrativa da Proxypay.
+
+      Os endereços e seus ambientes disponíveis podem ser consultados em cada endopint.
   - name: Códigos de retorno para criação de transações
     description: |-
       | status | sucesso? | descrição |
@@ -100,13 +107,11 @@ servers:
   - url: https://api-sandbox.proxypay.com.br/v1
     description: Endpoint Payment API Sandbox v1 (usa dados de teste)
 
-  - url: https://adm-sandbox.proxypay.com.br/api/org/v1/
-    description: Endpoint Administrativo V1 (Criacão e gerenciamento de empresas)
-
 x-tagGroups:
 - name: Sobre
   tags:
     - Quem somos
+    - APIs
 - name: Ref. códigos da API
   tags:
     - Códigos de retorno para criação de transações
@@ -245,6 +250,9 @@ paths:
           description: "Transação não encontrada"
 
   /api/org/v1/company/:
+    servers:
+      - url: https://adm-sandbox.proxypay.com.br/
+        description: Endpoint Administrativo V1 (Criacão e gerenciamento de empresas)
     post:
       tags:
         - Credenciamento
