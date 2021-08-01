@@ -100,6 +100,13 @@ tags:
       | `UNKNOWN` | Situação não mapeada |
       | `APPROVED` | Transação aprovada no sistema antifraude |
       | `REJECTED` | Transação não aprovada no sistema antifraude |
+  - name: Lista de situações de config de adquirente
+    description: |-
+      | Status | Descrição |
+      | :------- | :--------- |
+      | `homolog` | Não é considerada para transações de pagamentos, apenas usando explicitamente no payload das requisições. Recomendado para validação de configurações. |
+      | `inactive` | Não será considerada para transações mesmo que explicitamente no payload. |
+      | `active` | Considerada para transações de pagamento. |
   - name: "Postman collection"
     description: https://documenter.getpostman.com/view/483953/TzCMeUQF
 
@@ -116,12 +123,15 @@ x-tagGroups:
   tags:
     - Códigos de retorno para criação de transações
     - Lista de situações da transação
+    - Lista de situações da transação de antifraude
+    - Lista de situações de config de adquirente
 - name: Endpoints pagamentos
   tags:
     - Transação
 - name: Endpoints administativos
   tags:
     - Credenciamento
+    - Configs p/ adquirentes
 
 paths:
   /transaction:
@@ -252,11 +262,95 @@ paths:
   /api/org/v1/company/:
     servers:
       - url: https://adm-sandbox.proxypay.com.br/
-        description: Endpoint Administrativo V1 (Criacão e gerenciamento de empresas)
+        description: Endpoint Administrativo V1
     post:
       tags:
         - Credenciamento
       summary: "Criação de empresa"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyCreation"
+      responses:
+        201:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+
+  /api/gateways/v1/rede/:
+    servers:
+      - url: https://adm-sandbox.proxypay.com.br/
+        description: Endpoint Administrativo V1
+    post:
+      tags:
+        - Configs p/ adquirentes
+      summary: "Criação de config. Rede"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GatewayRedeCreation"
+      responses:
+        201:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayRedeCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+
+  /api/gateways/v1/cielo/:
+    servers:
+      - url: https://adm-sandbox.proxypay.com.br/
+        description: Endpoint Administrativo V1
+    post:
+      tags:
+        - Configs p/ adquirentes
+      summary: "Criação de config. Cielo"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GatewayCieloCreation"
+      responses:
+        201:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayCieloCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+
+  /api/org/v1/apiclient/:
+    servers:
+      - url: https://adm-sandbox.proxypay.com.br/
+        description: Endpoint Administrativo V1
+    post:
+      tags:
+        - Api client
+      summary: "Criação clientes de API para transações"
       requestBody:
         required: true
         content:
@@ -940,3 +1034,98 @@ components:
           type: "string"
           description: "E-mail"
           example: "foo@bar.com.br"
+
+    GatewayRedeCreation:
+      type: "object"
+      required:
+        - "token"
+        - "company"
+      properties:
+        description:
+          type: "string"
+          description: "Descrição. **Comprimento <= 200**"
+          example: "Token para Rede"
+        token:
+          type: "string"
+          description: "Token de autenticação em base64. **Comprimento <= 200**"
+          example: "Zm9vb29vb286YmFhYWFhYXJy"
+        company:
+          type: "integer"
+          description: "Id da empresa."
+          example: 123
+
+    GatewayRedeCreationResponse:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "Id"
+          example: 99
+        status:
+          type: "string"
+          description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+          example: "homolog"
+        description:
+          type: "string"
+          description: "Descrição"
+          example: "Token para Rede"
+        token:
+          type: "string"
+          description: "Token de autenticação em base64"
+          example: "Zm9vb29vb286YmFhYWFhYXJy"
+        company:
+          type: "integer"
+          description: "Id da empresa."
+          example: "123"
+
+    GatewayCieloCreation:
+      type: "object"
+      required:
+        - "merchantId"
+        - "merchantKey"
+        - "company"
+      properties:
+        description:
+          type: "string"
+          description: "Descrição. **Comprimento <= 200**"
+          example: "Token para Rede"
+        merchantId:
+          type: "string"
+          description: "Id do cliente na Cielo. **Comprimento <= 200**"
+          example: "632c4a39-b713-47a5-969d-32a04e105b48"
+        merchantKey:
+          type: "string"
+          description: "Chave do cliente na Cielo. **Comprimento <= 200**"
+          example: "EYDQRYCMVZBZPZJFGHAKSHKEJKJWHYVGJABBYLME"
+        company:
+          type: "integer"
+          description: "Id da empresa."
+          example: 123
+
+    GatewayCieloCreationResponse:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "Id"
+          example: 99
+        status:
+          type: "string"
+          description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+          example: "homolog"
+        description:
+          type: "string"
+          description: "Descrição"
+          example: "Token para Rede"
+        merchantId:
+          type: "string"
+          description: "Id do cliente na Cielo."
+          example: "632c4a39-b713-47a5-969d-32a04e105b48"
+        merchantKey:
+          type: "string"
+          description: "Chave do cliente na Cielo."
+          example: "EYDQRYCMVZBZPZJFGHAKSHKEJKJWHYVGJABBYLME"
+        company:
+          type: "integer"
+          description: "Id da empresa."
+          example: "123"
