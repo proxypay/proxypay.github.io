@@ -1,3 +1,5 @@
+# TODO: Move unique payloads (that is used only in one endpoint) to its endpoint.
+
 openapi: 3.0.0
 info:
   title: "ProxyPay API"
@@ -14,72 +16,72 @@ tags:
     description: |-
       Trabalhamos com duas API's distintas para uso administrativo e para pagamentos.
 
-      Para cada uma deve-se usar um token específico, respectivamente, administrativo e de pagamentos. Ambos podem ser gerados na página administrativa da Proxypay.
+      Para cada uma deve-se usar chaves distintas, respectivamente, **API Client Administrativo** e **API Client para pagamentos**. Ambos podem ser gerados na página administrativa da Proxypay. Também é possível gerar chaves para **API Client para pagamentos** via API no endpoint [Criação clientes de API para transações](#tag/Clientes-de-API/paths/~1api~1org~1v1~1apiclient~1/post).
 
-      Os endereços e seus ambientes disponíveis podem ser consultados em cada endopint.
+      Os endereços e seus ambientes disponíveis podem ser consultados em cada endpoint.
   - name: Códigos de retorno para criação de transações
     description: |-
       | status | sucesso? | descrição |
       |:-------|:----|:--------|
-      | `Success` | yes | Sucesso |
-      | `GenericError` | no | Genérica |
-      | `InsufficientFunds` | no | Saldo/limite insuficiente |
-      | `InvalidPassword` | no | Senha inválida |
-      | `NotAllowed` | no | Transação não permitida para o cartão |
-      | `InvalidCardNumber` | no | Número cartão não pertence ao emissor | número cartão inválido |
-      | `SecurityViolation` | no | Violação de segurança |
-      | `SuspectedFraud` | no | Suspeita de fraude |
-      | `InvalidMerchant` | no | Comerciante inválido |
-      | `RetryRequired` | no | Refazer a transação (emissor solicita retentativa) |
-      | `ConsultAccreditation` | no | Consultar credenciador |
-      | `AcquirerProblem` | no | Problema no adquirente |
-      | `CardError` | no | Erro no cartão |
-      | `FormatError` | no | Erro de formato (mensageria) |
-      | `InvalidTransactionValue` | no | Valor da transação inválida |
-      | `InvalidInstallmentValue` | no | Valor da parcela inválida |
-      | `PasswordAttemptsExceeded` | no | Excedidas tentativas de senha | compras |
-      | `LostCard` | no | Cartão perdido |
-      | `StolenCard` | no | Cartão roubado |
-      | `ExpiredCard` | no | Cartão vencido / dt expiração inválida |
-      | `TransactionNotAllowed` | no | Transação não permitida | capacidade do terminal |
-      | `ValueExceeded` | no | Valor excesso | saque |
-      | `InternationalTransactionWithLocalCard` | no | Cartão doméstico - transação internacional |
-      | `InvalidMinValue` | no | Valor mínimo da transação inválido |
-      | `ExceededWithdrawQuantity` | no | Quant. de saques excedido |
-      | `ExpiredPassword` | no | Senha vencida / erro de criptografia de senha |
-      | `PasswordAttemptsExceededWithdraw` | no | Excedidas tentativas de senha | saque |
-      | `InvalidDestinationAccount` | no | Conta destino inválida ou inexistente |
-      | `InvalidOriginAccount` | no | Conta origem inválida ou inexistente |
-      | `CardStillBlocked` | no | Cartão novo sem desbloqueio |
-      | `InvalidCard` | no | Cartão inválido (criptograma) |
-      | `IssuerOutOfService` | no | Emissor fora do ar |
-      | `SystemFailure` | no | Falha do sistema |
-      | `DiffPreAuthorization` | no | Diferença - pré autorização |
-      | `InvalidFunctionDebit` | no | Função incorreta (débito) |
-      | `InvalidFunctionCredit` | no | Função incorreta (crédito) |
-      | `ChangePassword` | no | Troca de senha / desbloqueio |
-      | `NewPasswordNotAccepted` | no | Nova senha não aceita |
-      | `CollectCard` | no | Recolher cartão (não há fraude) |
-      | `DynamicKeyChangeError` | no | Erro por mudança de chave dinâmica |
-      | `FraudConfirmed` | no | Fraude confirmada |
-      | `EmitterNotFound` | no | Emissor ñ localizado - bin incorreto |
-      | `NotAllowedByMoneyLaundryLaw` | no | (negativa do adquirente) não cumprimento pelas leis de ante lavagem de dinheiro |
-      | `InvalidRollback` | no | Reversão inválida |
-      | `NotFoundByRouter` | no | Não localizado pelo roteador |
-      | `DeniedByInfractionLaw` | no | Transação negada por infração de lei |
-      | `DuplicateTracingData` | no | Valor do tracing data duplicado |
-      | `UnsupportedSurchage` | no | Surcharge não suportado |
-      | `UnsupportedSurchageDebitNetwork` | no | Surcharge não suportado pela rede de débito |
-      | `StripForce` | no | Forçar stip |
-      | `WithdrawNotAvailable` | no | Saque não disponível |
-      | `ServiceRecurrencySuspension` | no | Suspensão de pagamento recorrente para um serviço |
-      | `AllServiceRecurrencySuspension` | no | Suspensão de pagamento recorrente para todos serviço |
-      | `TransactionLotQualifiedVisaPin` | no | Transação não qualificada para visa pin |
-      | `AllAuthorizationOrderSuspended` | no | Suspensão de todas as ordens de autorização |
-      | `RegisterNotFoundInFile` | no | Não é possível localizar o registro no arquivo |
-      | `FileNotAvailableForUpdate` | no | Arquivo não disponível para atualização |
-      | `RejectedCancel` | no | Cancelamento não efetuado. transação não localizada. |
-      | `ApprovedTransactionCancel` | no | Transação de cancelamento autorizada com sucesso. atençâo: esse retorno é para casos de cancelamentos e não para casos de autorizações. |
+      | **Success** | sim | Sucesso |
+      | **GenericError** | não | Genérica |
+      | **InsufficientFunds** | não | Saldo/limite insuficiente |
+      | **InvalidPassword** | não | Senha inválida |
+      | **NotAllowed** | não | Transação não permitida para o cartão |
+      | **InvalidCardNumber** | não | Número cartão não pertence ao emissor | número cartão inválido |
+      | **SecurityViolation** | não | Violação de segurança |
+      | **SuspectedFraud** | não | Suspeita de fraude |
+      | **InvalidMerchant** | não | Comerciante inválido |
+      | **RetryRequired** | não | Refazer a transação (emissor solicita retentativa) |
+      | **ConsultAccreditation** | não | Consultar credenciador |
+      | **AcquirerProblem** | não | Problema no adquirente |
+      | **CardError** | não | Erro no cartão |
+      | **FormatError** | não | Erro de formato (mensageria) |
+      | **InvalidTransactionValue** | não | Valor da transação inválida |
+      | **InvalidInstallmentValue** | não | Valor da parcela inválida |
+      | **PasswordAttemptsExceeded** | não | Excedidas tentativas de senha | compras |
+      | **LostCard** | não | Cartão perdido |
+      | **StolenCard** | não | Cartão roubado |
+      | **ExpiredCard** | não | Cartão vencido / dt expiração inválida |
+      | **TransactionNotAllowed** | não | Transação não permitida | capacidade do terminal |
+      | **ValueExceeded** | não | Valor excesso | saque |
+      | **InternationalTransactionWithLocalCard** | não | Cartão doméstico - transação internacional |
+      | **InvalidMinValue** | não | Valor mínimo da transação inválido |
+      | **ExceededWithdrawQuantity** | não | Quant. de saques excedido |
+      | **ExpiredPassword** | não | Senha vencida / erro de criptografia de senha |
+      | **PasswordAttemptsExceededWithdraw** | não | Excedidas tentativas de senha | saque |
+      | **InvalidDestinationAccount** | não | Conta destino inválida ou inexistente |
+      | **InvalidOriginAccount** | não | Conta origem inválida ou inexistente |
+      | **CardStillBlocked** | não | Cartão novo sem desbloqueio |
+      | **InvalidCard** | não | Cartão inválido (criptograma) |
+      | **IssuerOutOfService** | não | Emissor fora do ar |
+      | **SystemFailure** | não | Falha do sistema |
+      | **DiffPreAuthorization** | não | Diferença - pré autorização |
+      | **InvalidFunctionDebit** | não | Função incorreta (débito) |
+      | **InvalidFunctionCredit** | não | Função incorreta (crédito) |
+      | **ChangePassword** | não | Troca de senha / desbloqueio |
+      | **NewPasswordNotAccepted** | não | Nova senha não aceita |
+      | **CollectCard** | não | Recolher cartão (não há fraude) |
+      | **DynamicKeyChangeError** | não | Erro por mudança de chave dinâmica |
+      | **FraudConfirmed** | não | Fraude confirmada |
+      | **EmitterNotFound** | não | Emissor ñ localizado - bin incorreto |
+      | **NotAllowedByMoneyLaundryLaw** | não | (negativa do adquirente) não cumprimento pelas leis de ante lavagem de dinheiro |
+      | **InvalidRollback** | não | Reversão inválida |
+      | **NotFoundByRouter** | não | Não localizado pelo roteador |
+      | **DeniedByInfractionLaw** | não | Transação negada por infração de lei |
+      | **DuplicateTracingData** | não | Valor do tracing data duplicado |
+      | **UnsupportedSurchage** | não | Surcharge não suportado |
+      | **UnsupportedSurchageDebitNetwork** | não | Surcharge não suportado pela rede de débito |
+      | **StripForce** | não | Forçar stip |
+      | **WithdrawNotAvailable** | não | Saque não disponível |
+      | **ServiceRecurrencySuspension** | não | Suspensão de pagamento recorrente para um serviço |
+      | **AllServiceRecurrencySuspension** | não | Suspensão de pagamento recorrente para todos serviço |
+      | **TransactionLotQualifiedVisaPin** | não | Transação não qualificada para visa pin |
+      | **AllAuthorizationOrderSuspended** | não | Suspensão de todas as ordens de autorização |
+      | **RegisterNotFoundInFile** | não | Não é possível localizar o registro no arquivo |
+      | **FileNotAvailableForUpdate** | não | Arquivo não disponível para atualização |
+      | **RejectedCancel** | não | Cancelamento não efetuado. transação não localizada. |
+      | **ApprovedTransactionCancel** | não | Transação de cancelamento autorizada com sucesso. atençâo: esse retorno é para casos de cancelamentos e não para casos de autorizações. |
   - name: Lista de situações da transação
     description: |-
       | Status | Descrição |
@@ -97,11 +99,16 @@ tags:
     description: |-
       | Status | Descrição |
       | :------- | :--------- |
-      | `UNKNOWN` | Situação não mapeada |
-      | `APPROVED` | Transação aprovada no sistema antifraude |
-      | `REJECTED` | Transação não aprovada no sistema antifraude |
-  - name: "Postman collection"
-    description: https://documenter.getpostman.com/view/483953/TzCMeUQF
+      | **UNKNOWN** | Situação não mapeada |
+      | **APPROVED** | Transação aprovada no sistema antifraude |
+      | **REJECTED** | Transação não aprovada no sistema antifraude |
+  - name: Lista de situações de config de adquirente
+    description: |-
+      | Status | Descrição  |
+      | :---------- | :--------- |
+      | **homolog**   | Não é considerada para transações de pagamentos. Disponível apenas usando explicitamente no payload das requisições. Recomendado para validação de configurações. |
+      | **inactive**  | Não será considerada para transações mesmo que explicitamente no payload. |
+      | **active**    | Considerada para transações de pagamento. |
 
 servers:
   - url: https://api-sandbox.proxypay.com.br/v1
@@ -112,20 +119,26 @@ x-tagGroups:
   tags:
     - Quem somos
     - APIs
-- name: Ref. códigos da API
-  tags:
-    - Códigos de retorno para criação de transações
-    - Lista de situações da transação
 - name: Endpoints pagamentos
   tags:
     - Transação
 - name: Endpoints administativos
   tags:
     - Credenciamento
+    - Configs p/ adquirentes
+    - Clientes de API
+- name: Ref. da API
+  tags:
+    - Códigos de retorno para criação de transações
+    - Lista de situações da transação
+    - Lista de situações da transação de antifraude
+    - Lista de situações de config de adquirente
 
 paths:
   /transaction:
     post:
+      security:
+        - API Client para pagamentos: []
       tags:
         - Transação
       summary: "Criação"
@@ -150,6 +163,8 @@ paths:
                 $ref: "#/components/schemas/ValidationError"
   /transaction/{gatewayCode}/{transactionId}:
     get:
+      security:
+        - API Client para pagamentos: []
       tags:
         - Transação
       summary: "Consulta"
@@ -178,6 +193,8 @@ paths:
         404:
           description: "Transação não encontrada"
     put:
+      security:
+        - API Client para pagamentos: []
       tags:
         - Transação
       summary: "Captura"
@@ -215,6 +232,8 @@ paths:
 
   /transaction/{gatewayCode}/{transactionId}/refunds:
     post:
+      security:
+        - API Client para pagamentos: []
       tags:
         - Transação
       summary: "Cancelamento"
@@ -252,8 +271,10 @@ paths:
   /api/org/v1/company/:
     servers:
       - url: https://adm-sandbox.proxypay.com.br/
-        description: Endpoint Administrativo V1 (Criacão e gerenciamento de empresas)
+        description: Endpoint Administrativo V1
     post:
+      security:
+        - API Client Administrativo: []
       tags:
         - Credenciamento
       summary: "Criação de empresa"
@@ -277,25 +298,276 @@ paths:
               schema:
                 $ref: "#/components/schemas/AdmValidationError"
 
-security:
-  - clientIdAndSecretBasic: []
+  /api/gateways/v1/rede/:
+    servers:
+      - url: https://adm-sandbox.proxypay.com.br/
+        description: Endpoint Administrativo V1
+    post:
+      security:
+        - API Client Administrativo: []
+      tags:
+        - Configs p/ adquirentes
+      summary: "Criação de config. Rede"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "token"
+                - "company"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 200**"
+                  example: "Token para Rede"
+                token:
+                  type: "string"
+                  description: "Token de autenticação em base64. **Comprimento <= 200**"
+                  example: "Zm9vb29vb286YmFhYWFhYXJy"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
+      responses:
+        201:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayRedeCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+    patch:
+      security:
+        - API Client Administrativo: []
+      tags:
+        - Configs p/ adquirentes
+      summary: "Atualização de config. Rede"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 200**"
+                  example: "Token para Rede"
+                status:
+                  type: "string"
+                  description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+                  example: "homolog"
+                token:
+                  type: "string"
+                  description: "Token de autenticação em base64. **Comprimento <= 200**"
+                  example: "Zm9vb29vb286YmFhYWFhYXJy"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
+      responses:
+        200:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayRedeCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+
+  /api/gateways/v1/cielo/:
+    servers:
+      - url: https://adm-sandbox.proxypay.com.br/
+        description: Endpoint Administrativo V1
+    post:
+      security:
+        - API Client Administrativo: []
+      tags:
+        - Configs p/ adquirentes
+      summary: "Criação de config. Cielo"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "merchantId"
+                - "merchantKey"
+                - "company"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 200**"
+                  example: "Token para Cielo"
+                merchantId:
+                  type: "string"
+                  description: "Id do cliente na Cielo. **Comprimento <= 200**"
+                  example: "632c4a39-b713-47a5-969d-32a04e105b48"
+                merchantKey:
+                  type: "string"
+                  description: "Chave do cliente na Cielo. **Comprimento <= 200**"
+                  example: "EYDQRYCMVZBZPZJFGHAKSHKEJKJWHYVGJABBYLME"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
+      responses:
+        201:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayCieloCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+    patch:
+      security:
+        - API Client Administrativo: []
+      tags:
+        - Configs p/ adquirentes
+      summary: "Atualização de config. Cielo"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 200**"
+                  example: "Token para Cielo"
+                status:
+                  type: "string"
+                  description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+                  example: "homolog"
+                merchantId:
+                  type: "string"
+                  description: "Id do cliente na Cielo. **Comprimento <= 200**"
+                  example: "632c4a39-b713-47a5-969d-32a04e105b48"
+                merchantKey:
+                  type: "string"
+                  description: "Chave do cliente na Cielo. **Comprimento <= 200**"
+                  example: "EYDQRYCMVZBZPZJFGHAKSHKEJKJWHYVGJABBYLME"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
+      responses:
+        200:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayCieloCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+
+  /api/org/v1/apiclient/:
+    servers:
+      - url: https://adm-sandbox.proxypay.com.br/
+        description: Endpoint Administrativo V1
+    post:
+      security:
+        - API Client Administrativo: []
+      tags:
+        - Clientes de API
+      summary: "Criação clientes de API para transações"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "company"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 30**"
+                  example: "Para uso pela aplicacao X"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
+      responses:
+        201:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  id:
+                    type: "integer"
+                    description: "Id"
+                    example: 99
+                  description:
+                    type: "string"
+                    description: "Descrição"
+                  company:
+                    type: "integer"
+                    description: "Id da empresa."
+                    example: "123"
+                  clientId:
+                    type: "string"
+                    description: "API Client ID"
+                    example: "cks4opqht0000t7cl35t8lse0"
+                  clientSecret:
+                    type: "string"
+                    description: "Chave API Client (exibido apenas uma vez)"
+                    example: "97c639c0-027b-49c6-9ea4-aadaa5364e96"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
 
 components:
   securitySchemes:
-    clientIdAndSecretBasic:
+    API Client para pagamentos:
+      type: http
+      scheme: basic
       description: >
-        Para acessar os endpoints da API é necessário usar HTTP Basic Auth com um `clientId` e `clientSecret`. Exemplo:
-
+        Para transacionar em nossa API é necessário gerar um **Cliente de API** (`clientId` e `clientSecret`) e usá-los via HTTP Basic Auth. Exemplo:
 
         Usando `my-client-id` como `clientId` e `my-client-secret` como `clientSecret`:
 
+        Junte ambos com `:` e codifique em base64, no exemplo, o resultado é `bXktY2xpZW50LWlkOm15LWNsaWVudC1zZWNyZXQ=`. Então, seu header `Authorization` será:
+
+        `Authorization: Basic bXktY2xpZW50LWlkOm15LWNsaWVudC1zZWNyZXQ=`.
+    API Client Administrativo:
+      type: http
+      scheme: basic
+      description: >
+        Para efetuar operações administrativas via API (cadastro de novas configs para adquirentes, por exemplo) é necessário gerar um **Cliente de API Administrativo** usar HTTP Basic Auth com um `clientId` e `clientSecret`. Exemplo:
+
+        Usando `my-client-id` como `clientId` e `my-client-secret` como `clientSecret`:
 
         Junte ambos com `:` e codifique em base64, no exemplo, o resultado é `bXktY2xpZW50LWlkOm15LWNsaWVudC1zZWNyZXQ=`. Então, seu header `Authorization` será:
 
-
         `Authorization: Basic bXktY2xpZW50LWlkOm15LWNsaWVudC1zZWNyZXQ=`.
-      type: http
-      scheme: basic
 
   schemas:
     TransactionCreation:
@@ -337,7 +609,7 @@ components:
           example: 2028
         cardHolderName:
           type: "string"
-          description: "Nome impresso no cartão, Ex: `JOAO DA SILVA`"
+          description: "Nome impresso no cartão, Ex: `JOAO DA SILVA`. **Comprimento <= 25**"
           example: "JOHN DOE"
         securityCode:
           type: "string"
@@ -596,7 +868,7 @@ components:
           example: 2028
         cardHolderName:
           type: "string"
-          description: "Nome impresso no cartão, E.g.: `JOAO DA SILVA`"
+          description: "Nome impresso no cartão, E.g.: `JOAO DA SILVA`. **Comprimento <= 25**"
           example: "JOHN DOE"
         softDescriptor:
           type: "string"
@@ -940,3 +1212,55 @@ components:
           type: "string"
           description: "E-mail"
           example: "foo@bar.com.br"
+
+    GatewayRedeCreationResponse:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "Id"
+          example: 99
+        status:
+          type: "string"
+          description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+          example: "homolog"
+        description:
+          type: "string"
+          description: "Descrição"
+          example: "Token para Rede"
+        token:
+          type: "string"
+          description: "Token de autenticação em base64"
+          example: "Zm9vb29vb286YmFhYWFhYXJy"
+        company:
+          type: "integer"
+          description: "Id da empresa."
+          example: "123"
+
+    GatewayCieloCreationResponse:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "Id"
+          example: 99
+        status:
+          type: "string"
+          description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+          example: "homolog"
+        description:
+          type: "string"
+          description: "Descrição"
+          example: "Token para Cielo"
+        merchantId:
+          type: "string"
+          description: "Id do cliente na Cielo."
+          example: "632c4a39-b713-47a5-969d-32a04e105b48"
+        merchantKey:
+          type: "string"
+          description: "Chave do cliente na Cielo."
+          example: "EYDQRYCMVZBZPZJFGHAKSHKEJKJWHYVGJABBYLME"
+        company:
+          type: "integer"
+          description: "Id da empresa."
+          example: "123"
