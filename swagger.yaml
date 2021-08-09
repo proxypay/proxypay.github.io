@@ -313,9 +313,67 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GatewayRedeCreation"
+              type: "object"
+              required:
+                - "token"
+                - "company"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 200**"
+                  example: "Token para Rede"
+                token:
+                  type: "string"
+                  description: "Token de autenticação em base64. **Comprimento <= 200**"
+                  example: "Zm9vb29vb286YmFhYWFhYXJy"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
       responses:
         201:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayRedeCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+    patch:
+      security:
+        - API Client Administrativo: []
+      tags:
+        - Configs p/ adquirentes
+      summary: "Atualização de config. Rede"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 200**"
+                  example: "Token para Rede"
+                status:
+                  type: "string"
+                  description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+                  example: "homolog"
+                token:
+                  type: "string"
+                  description: "Token de autenticação em base64. **Comprimento <= 200**"
+                  example: "Zm9vb29vb286YmFhYWFhYXJy"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
+      responses:
+        200:
           description: "Sucesso"
           content:
             application/json:
@@ -343,9 +401,76 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GatewayCieloCreation"
+              type: "object"
+              required:
+                - "merchantId"
+                - "merchantKey"
+                - "company"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 200**"
+                  example: "Token para Cielo"
+                merchantId:
+                  type: "string"
+                  description: "Id do cliente na Cielo. **Comprimento <= 200**"
+                  example: "632c4a39-b713-47a5-969d-32a04e105b48"
+                merchantKey:
+                  type: "string"
+                  description: "Chave do cliente na Cielo. **Comprimento <= 200**"
+                  example: "EYDQRYCMVZBZPZJFGHAKSHKEJKJWHYVGJABBYLME"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
       responses:
         201:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayCieloCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+    patch:
+      security:
+        - API Client Administrativo: []
+      tags:
+        - Configs p/ adquirentes
+      summary: "Atualização de config. Cielo"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 200**"
+                  example: "Token para Cielo"
+                status:
+                  type: "string"
+                  description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+                  example: "homolog"
+                merchantId:
+                  type: "string"
+                  description: "Id do cliente na Cielo. **Comprimento <= 200**"
+                  example: "632c4a39-b713-47a5-969d-32a04e105b48"
+                merchantKey:
+                  type: "string"
+                  description: "Chave do cliente na Cielo. **Comprimento <= 200**"
+                  example: "EYDQRYCMVZBZPZJFGHAKSHKEJKJWHYVGJABBYLME"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
+      responses:
+        200:
           description: "Sucesso"
           content:
             application/json:
@@ -373,14 +498,45 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ApiClientCreation"
+              type: "object"
+              required:
+                - "company"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 30**"
+                  example: "Para uso pela aplicacao X"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
       responses:
         201:
           description: "Sucesso"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiClientCreationResponse"
+                type: "object"
+                properties:
+                  id:
+                    type: "integer"
+                    description: "Id"
+                    example: 99
+                  description:
+                    type: "string"
+                    description: "Descrição"
+                  company:
+                    type: "integer"
+                    description: "Id da empresa."
+                    example: "123"
+                  clientId:
+                    type: "string"
+                    description: "API Client ID"
+                    example: "cks4opqht0000t7cl35t8lse0"
+                  clientSecret:
+                    type: "string"
+                    description: "Chave API Client (exibido apenas uma vez)"
+                    example: "97c639c0-027b-49c6-9ea4-aadaa5364e96"
         400:
           description: "Bad request"
           content:
@@ -1057,25 +1213,6 @@ components:
           description: "E-mail"
           example: "foo@bar.com.br"
 
-    GatewayRedeCreation:
-      type: "object"
-      required:
-        - "token"
-        - "company"
-      properties:
-        description:
-          type: "string"
-          description: "Descrição. **Comprimento <= 200**"
-          example: "Token para Rede"
-        token:
-          type: "string"
-          description: "Token de autenticação em base64. **Comprimento <= 200**"
-          example: "Zm9vb29vb286YmFhYWFhYXJy"
-        company:
-          type: "integer"
-          description: "Id da empresa."
-          example: 123
-
     GatewayRedeCreationResponse:
       type: "object"
       properties:
@@ -1099,30 +1236,6 @@ components:
           type: "integer"
           description: "Id da empresa."
           example: "123"
-
-    GatewayCieloCreation:
-      type: "object"
-      required:
-        - "merchantId"
-        - "merchantKey"
-        - "company"
-      properties:
-        description:
-          type: "string"
-          description: "Descrição. **Comprimento <= 200**"
-          example: "Token para Cielo"
-        merchantId:
-          type: "string"
-          description: "Id do cliente na Cielo. **Comprimento <= 200**"
-          example: "632c4a39-b713-47a5-969d-32a04e105b48"
-        merchantKey:
-          type: "string"
-          description: "Chave do cliente na Cielo. **Comprimento <= 200**"
-          example: "EYDQRYCMVZBZPZJFGHAKSHKEJKJWHYVGJABBYLME"
-        company:
-          type: "integer"
-          description: "Id da empresa."
-          example: 123
 
     GatewayCieloCreationResponse:
       type: "object"
@@ -1151,40 +1264,3 @@ components:
           type: "integer"
           description: "Id da empresa."
           example: "123"
-
-    ApiClientCreation:
-      type: "object"
-      required:
-        - "company"
-      properties:
-        description:
-          type: "string"
-          description: "Descrição. **Comprimento <= 30**"
-          example: "Para uso pela aplicacao X"
-        company:
-          type: "integer"
-          description: "Id da empresa."
-          example: 123
-
-    ApiClientCreationResponse:
-      type: "object"
-      properties:
-        id:
-          type: "integer"
-          description: "Id"
-          example: 99
-        description:
-          type: "string"
-          description: "Descrição"
-        company:
-          type: "integer"
-          description: "Id da empresa."
-          example: "123"
-        clientId:
-          type: "string"
-          description: "API Client ID"
-          example: "cks4opqht0000t7cl35t8lse0"
-        clientSecret:
-          type: "string"
-          description: "Chave API Client (exibido apenas uma vez)"
-          example: "97c639c0-027b-49c6-9ea4-aadaa5364e96"
