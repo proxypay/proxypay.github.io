@@ -102,8 +102,10 @@ tags:
       | **UNKNOWN** | Situação não mapeada |
       | **APPROVED** | Transação aprovada no sistema antifraude |
       | **REJECTED** | Transação não aprovada no sistema antifraude |
-  - name: Lista de situações de config de adquirente
+  - name: Lista de situações de configs
     description: |-
+      Situações aplicadas para Adquirentes e Antifraudes.
+
       | Status | Descrição  |
       | :---------- | :--------- |
       | **homolog**   | Não é considerada para transações de pagamentos. Disponível apenas usando explicitamente no payload das requisições. Recomendado para validação de configurações. |
@@ -126,13 +128,14 @@ x-tagGroups:
   tags:
     - Credenciamento
     - Configs p/ adquirentes
+    - Configs p/ antifraudes
     - Clientes de API
 - name: Ref. da API
   tags:
     - Códigos de retorno para criação de transações
     - Lista de situações da transação
     - Lista de situações da transação de antifraude
-    - Lista de situações de config de adquirente
+    - Lista de situações de configs
 
 paths:
   /transaction:
@@ -362,7 +365,7 @@ paths:
                   example: "Token para Rede"
                 status:
                   type: "string"
-                  description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+                  description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-configs)"
                   example: "homolog"
                 token:
                   type: "string"
@@ -455,7 +458,7 @@ paths:
                   example: "Token para Cielo"
                 status:
                   type: "string"
-                  description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+                  description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-configs)"
                   example: "homolog"
                 merchantId:
                   type: "string"
@@ -482,6 +485,104 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AdmValidationError"
+
+  /api/antifrauds/v1/clearsale/:
+    servers:
+      - url: https://adm-sandbox.proxypay.com.br/
+        description: Endpoint Administrativo V1
+    post:
+      security:
+        - API Client Administrativo: []
+      tags:
+        - Configs p/ antifraudes
+      summary: "Criação de config. ClearSale"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "username"
+                - "password"
+                - "company"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 200**"
+                  example: "Configs de acesso clearsale"
+                username:
+                  type: "string"
+                  description: "Usuário para acesso. **Comprimento <= 200**"
+                  example: "MyCompany_RT"
+                password:
+                  type: "string"
+                  description: "Senha para acesso. **Comprimento <= 200**"
+                  example: "EYDQRYCMVZ"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
+      responses:
+        201:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AntifraudClearsaleCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+    patch:
+      security:
+        - API Client Administrativo: []
+      tags:
+        - Configs p/ antifraudes
+      summary: "Atualização de config. ClearSale"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                description:
+                  type: "string"
+                  description: "Descrição. **Comprimento <= 200**"
+                  example: "Configs de acesso clearsale"
+                status:
+                  type: "string"
+                  description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-configs)"
+                  example: "homolog"
+                username:
+                  type: "string"
+                  description: "Usuário para acesso. **Comprimento <= 200**"
+                  example: "MyCompany_RT"
+                password:
+                  type: "string"
+                  description: "Senha para acesso. **Comprimento <= 200**"
+                  example: "EYDQRYCMVZ"
+                company:
+                  type: "integer"
+                  description: "Id da empresa."
+                  example: 123
+      responses:
+        200:
+          description: "Sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AntifraudClearsaleCreationResponse"
+        400:
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmValidationError"
+
 
   /api/org/v1/apiclient/:
     servers:
@@ -1222,7 +1323,7 @@ components:
           example: 99
         status:
           type: "string"
-          description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+          description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-configs)"
           example: "homolog"
         description:
           type: "string"
@@ -1246,7 +1347,7 @@ components:
           example: 99
         status:
           type: "string"
-          description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-config-de-adquirente)"
+          description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-configs)"
           example: "homolog"
         description:
           type: "string"
@@ -1260,6 +1361,34 @@ components:
           type: "string"
           description: "Chave do cliente na Cielo."
           example: "EYDQRYCMVZBZPZJFGHAKSHKEJKJWHYVGJABBYLME"
+        company:
+          type: "integer"
+          description: "Id da empresa."
+          example: "123"
+
+    AntifraudClearsaleCreationResponse:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "Id"
+          example: 99
+        status:
+          type: "string"
+          description: "Status da configuração. Veja a lista completa [aqui](#tag/Lista-de-situacoes-de-configs)"
+          example: "homolog"
+        description:
+          type: "string"
+          description: "Descrição."
+          example: "Configs de acesso clearsale"
+        username:
+          type: "string"
+          description: "Usuário para acesso"
+          example: "MyCompany_RT"
+        password:
+          type: "string"
+          description: "Senha para acesso"
+          example: "EYDQRYCMVZ"
         company:
           type: "integer"
           description: "Id da empresa."
