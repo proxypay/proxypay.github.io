@@ -19,6 +19,16 @@ tags:
       Para cada uma deve-se usar chaves distintas, respectivamente, **API Client Administrativo** e **API Client para pagamentos**. Ambos podem ser gerados na página administrativa da Proxypay. Também é possível gerar chaves para **API Client para pagamentos** via API no endpoint [Criação clientes de API para transações](#tag/Clientes-de-API/paths/~1api~1org~1v1~1apiclient~1/post).
 
       Os endereços e seus ambientes disponíveis podem ser consultados em cada endpoint.
+  - name: Lista de bandeiras aceitas pela API de pagamentos
+    description: |-
+      | Nome       | Valor           |
+      |------------|-----------------|
+      | HiperCard  | `"hipercard"`   |
+      | Visa       | `"visa"`        |
+      | Mastercard | `"mastercard"`  |
+      | Amex       | `"amex"`        |
+      | Elo        | `"elo"`         |
+      | Hiper      | `"hiper"`       |
   - name: Códigos de retorno para criação de transações
     description: |-
       | status | sucesso? | descrição |
@@ -133,6 +143,7 @@ x-tagGroups:
 - name: Ref. da API
   tags:
     - Códigos de retorno para criação de transações
+    - Lista de bandeiras aceitas pela API de pagamentos
     - Lista de situações da transação
     - Lista de situações da transação de antifraude
     - Lista de situações de configs
@@ -716,6 +727,14 @@ components:
           type: "string"
           description: "Codigo de segurança (CVV), formato *999*, E.g.: `123`"
           example: "123"
+        softDescriptor:
+          type: "string"
+          description: "Usado para identificar a transacão na fatura do cliente. **Comprimento <= 13**"
+          example: "MENSALIDADE"
+        cardBrand:
+          type: "string"
+          description: "Nome da bandeira do cartao (veja a lista completa [aqui](#tag/Lista-de-bandeiras-aceitas-pela-API-de-pagamentos)). **Opcional, Comprimento <= 30**"
+          example: "mastercard"
         currency:
           type: "string"
           description: "Código ISO 4217 da moeda"
@@ -860,7 +879,7 @@ components:
           type: "string"
           description: "Mensagem retornada pelo gateway sem tratamento"
           example: "Operation Successful"
-        cardBrand:
+        gatewayCardBrand:
           type: "string"
           description: "Bandeira do cartão retornada pelo gateway"
           example: "visa"
